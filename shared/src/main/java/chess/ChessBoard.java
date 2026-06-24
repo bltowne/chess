@@ -8,9 +8,9 @@ package chess;
  */
 public class ChessBoard {
 
-    ChessPiece[][] squares = new ChessPiece[8][8];
+    ChessPiece[][] squares;
     public ChessBoard() {
-        
+        squares = new ChessPiece[8][8];
     }
 
     /**
@@ -38,6 +38,6 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+
     }
 }
