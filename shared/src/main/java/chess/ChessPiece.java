@@ -69,11 +69,21 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
-        if (piece.getPieceType() == PieceType.BISHOP) {
+        if (piece.getPieceType() == PieceType.KING){
+            PieceMovesCalculator moves = new KingMovesCalculator();
+        } else if (piece.getPieceType() == PieceType.QUEEN) {
+            PieceMovesCalculator moves = new QueenMovesCalculator();
+        } else if (piece.getPieceType() == PieceType.BISHOP) {
             PieceMovesCalculator moves = new BishopMovesCalculator();
+            return moves.pieceMoves(board, myPosition);
+        } else if (piece.getPieceType() == PieceType.KNIGHT) {
+            PieceMovesCalculator moves = new KnightMovesCalculator();
             return moves.pieceMoves(board, myPosition);
         } else if (piece.getPieceType() == PieceType.ROOK) {
             PieceMovesCalculator moves = new RookMovesCalculator();
+            return moves.pieceMoves(board, myPosition);
+        } else if (piece.getPieceType() == PieceType.PAWN) {
+            PieceMovesCalculator moves = new PawnMovesCalculator();
             return moves.pieceMoves(board, myPosition);
         }
         return List.of();
