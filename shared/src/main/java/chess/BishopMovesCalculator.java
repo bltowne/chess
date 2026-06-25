@@ -22,16 +22,20 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     private void bishopMovesUpRight(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         int x = myPosition.getRow() + 1;
         int y = myPosition.getColumn() + 1;
+
         while (x <= 8 && y <= 8 && board.getPiece(new ChessPosition(x, y)) == null) {
             moves.add(new ChessMove(myPosition, new ChessPosition(x, y), null));
             x++;
             y++;
         }
-        ChessPosition endPosition = new ChessPosition(x-1, y-1);
-        ChessPiece piece = board.getPiece(endPosition);
-        if (piece != null) {
-            if (piece.getTeamColor() != color) {
-                moves.add(new ChessMove(myPosition, endPosition, null));
+
+        if (x < 8 && y < 8) {
+            ChessPosition endPosition = new ChessPosition(x, y);
+            ChessPiece piece = board.getPiece(endPosition);
+            if (piece != null) {
+                if (piece.getTeamColor() != color) {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
             }
         }
     }
@@ -39,16 +43,20 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     private void bishopMovesUpLeft(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         int x = myPosition.getRow() - 1;
         int y = myPosition.getColumn() + 1;
+
         while (x >= 1 && y <= 8 && board.getPiece(new ChessPosition(x, y)) == null) {
             moves.add(new ChessMove(myPosition, new ChessPosition(x, y), null));
             x--;
             y++;
         }
-        ChessPosition endPosition = new ChessPosition(x+1, y-1);
-        ChessPiece piece = board.getPiece(endPosition);
-        if (piece != null) {
-            if (piece.getTeamColor() != color) {
-                moves.add(new ChessMove(myPosition, endPosition, null));
+
+        if (x > 1 && y < 8) {
+            ChessPosition endPosition = new ChessPosition(x, y);
+            ChessPiece piece = board.getPiece(endPosition);
+            if (piece != null) {
+                if (piece.getTeamColor() != color) {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
             }
         }
     }
@@ -56,16 +64,20 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     private void bishopMovesDownRight(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         int x = myPosition.getRow() + 1;
         int y = myPosition.getColumn() - 1;
+
         while (x <= 8 && y >= 1 && board.getPiece(new ChessPosition(x, y)) == null) {
             moves.add(new ChessMove(myPosition, new ChessPosition(x, y), null));
             x++;
             y--;
         }
-        ChessPosition endPosition = new ChessPosition(x-1, y+1);
-        ChessPiece piece = board.getPiece(endPosition);
-        if (piece != null) {
-            if (piece.getTeamColor() != color) {
-                moves.add(new ChessMove(myPosition, endPosition, null));
+
+        if (x < 8 && y > 1) {
+            ChessPosition endPosition = new ChessPosition(x, y);
+            ChessPiece piece = board.getPiece(endPosition);
+            if (piece != null) {
+                if (piece.getTeamColor() != color) {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
             }
         }
     }
@@ -73,16 +85,20 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     private void bishopMovesDownLeft(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         int x = myPosition.getRow() - 1;
         int y = myPosition.getColumn() - 1;
+
         while (x >= 1 && y >= 1 && board.getPiece(new ChessPosition(x, y)) == null) {
             moves.add(new ChessMove(myPosition, new ChessPosition(x, y), null));
             x--;
             y--;
         }
-        ChessPosition endPosition = new ChessPosition(x+1, y+1);
-        ChessPiece piece = board.getPiece(endPosition);
-        if (piece != null) {
-            if (piece.getTeamColor() != color) {
-                moves.add(new ChessMove(myPosition, endPosition, null));
+
+        if (x > 1 && y > 1) {
+            ChessPosition endPosition = new ChessPosition(x, y);
+            ChessPiece piece = board.getPiece(endPosition);
+            if (piece != null) {
+                if (piece.getTeamColor() != color) {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
             }
         }
     }
