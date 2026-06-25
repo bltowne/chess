@@ -2,13 +2,11 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class BishopMovesCalculator implements PieceMovesCalculator {
 
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-//        return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1, 7), null));
         ChessPiece piece = board.getPiece(myPosition);
         ChessGame.TeamColor color = piece.getTeamColor();
         Collection<ChessMove> moves = new ArrayList<>();
@@ -102,41 +100,5 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             }
         }
     }
-
-//    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition position, ChessGame.TeamColor color, ChessPosition originalPosition, Collection<ChessMove> moves) {
-//        ChessPiece piece = board.getPiece(position);
-//        if (piece != null && position != originalPosition) {
-//            if (piece.getTeamColor() != color) {
-//                moves.add(new ChessMove(originalPosition, position, null));
-//            }
-//            return moves;
-//        }
-//
-//        moves.add(new ChessMove(originalPosition, position, null));
-//        int x = position.getRow();
-//        int y = position.getColumn();
-//
-//        // Check move up one right one
-//        if (x < 8 && y < 8) {
-//            bishopMoves(board, new ChessPosition(x + 1, y + 1), color, originalPosition, moves);
-//        }
-//
-//        // Check move up one left one
-//        if (x > 1 && y < 8) {
-//            bishopMoves(board, new ChessPosition(x - 1, y + 1), color, originalPosition, moves);
-//        }
-//
-//        // Check move down one right one
-//        if (x < 8 && y > 1) {
-//            bishopMoves(board, new ChessPosition(x + 1, y - 1), color, originalPosition, moves);
-//        }
-//
-//        // Check move down one left one
-//        if (x > 1 && y > 1) {
-//            bishopMoves(board, new ChessPosition(x - 1, y - 1), color, originalPosition, moves);
-//        }
-//
-//        return moves;
-//    }
 
 }
