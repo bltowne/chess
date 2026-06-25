@@ -71,6 +71,7 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.KING){
             PieceMovesCalculator moves = new KingMovesCalculator();
+            return moves.pieceMoves(board, myPosition);
         } else if (piece.getPieceType() == PieceType.QUEEN) {
             PieceMovesCalculator moves = new QueenMovesCalculator();
             return moves.pieceMoves(board, myPosition);
