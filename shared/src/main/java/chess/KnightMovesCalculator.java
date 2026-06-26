@@ -22,16 +22,18 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         int y = myPosition.getColumn() + 2;
 
         if (y <= 8) {
-            ChessPosition leftEndPosition = new ChessPosition(x - 1, y);
-            if (x >= 1) {
+            int lowX = x - 1;
+            if (lowX >= 1) {
+                ChessPosition leftEndPosition = new ChessPosition(lowX, y);
                 ChessPiece leftEnemy = board.getPiece(leftEndPosition);
                 if (leftEnemy == null || leftEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, leftEndPosition, null));
                 }
             }
-            ChessPosition rightEndPosition = new ChessPosition(x + 1, y);
-            if (x <= 8) {
-                ChessPiece rightEnemy = board.getPiece(leftEndPosition);
+            int highX = x + 1;
+            if (highX <= 8) {
+                ChessPosition rightEndPosition = new ChessPosition(highX, y);
+                ChessPiece rightEnemy = board.getPiece(rightEndPosition);
                 if (rightEnemy == null || rightEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, rightEndPosition, null));
                 }
@@ -44,16 +46,18 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         int y = myPosition.getColumn() - 2;
 
         if (y >= 1) {
-            ChessPosition leftEndPosition = new ChessPosition(x - 1, y);
-            if (x >= 1) {
+            int lowX = x - 1;
+            if (lowX >= 1) {
+                ChessPosition leftEndPosition = new ChessPosition(lowX, y);
                 ChessPiece leftEnemy = board.getPiece(leftEndPosition);
                 if (leftEnemy == null || leftEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, leftEndPosition, null));
                 }
             }
-            ChessPosition rightEndPosition = new ChessPosition(x + 1, y);
-            if (x <= 8) {
-                ChessPiece rightEnemy = board.getPiece(leftEndPosition);
+            int highX = x + 1;
+            if (highX <= 8) {
+                ChessPosition rightEndPosition = new ChessPosition (highX, y);
+                ChessPiece rightEnemy = board.getPiece(rightEndPosition);
                 if (rightEnemy == null || rightEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, rightEndPosition, null));
                 }
@@ -66,16 +70,18 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         int y = myPosition.getColumn();
 
         if (x <= 8) {
-            ChessPosition leftEndPosition = new ChessPosition(x, y - 1);
-            if (y >= 1) {
+            int lowY = y - 1;
+            if (lowY >= 1) {
+                ChessPosition leftEndPosition = new ChessPosition(x, lowY);
                 ChessPiece leftEnemy = board.getPiece(leftEndPosition);
                 if (leftEnemy == null || leftEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, leftEndPosition, null));
                 }
             }
-            ChessPosition rightEndPosition = new ChessPosition(x, y + 1);
-            if (y <= 8) {
-                ChessPiece rightEnemy = board.getPiece(leftEndPosition);
+            int highY = y + 1;
+            if (highY <= 8) {
+                ChessPosition rightEndPosition = new ChessPosition(x, highY);
+                ChessPiece rightEnemy = board.getPiece(rightEndPosition);
                 if (rightEnemy == null || rightEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, rightEndPosition, null));
                 }
@@ -88,16 +94,18 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         int y = myPosition.getColumn();
 
         if (x >= 1) {
-            ChessPosition leftEndPosition = new ChessPosition(x, y - 1);
-            if (y >= 1) {
+            int lowY = y - 1;
+            if (lowY >= 1) {
+                ChessPosition leftEndPosition = new ChessPosition(x, lowY);
                 ChessPiece leftEnemy = board.getPiece(leftEndPosition);
                 if (leftEnemy == null || leftEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, leftEndPosition, null));
                 }
             }
-            ChessPosition rightEndPosition = new ChessPosition(x, y + 1);
-            if (y <= 8) {
-                ChessPiece rightEnemy = board.getPiece(leftEndPosition);
+            int highY = y + 1;
+            if (highY <= 8) {
+                ChessPosition rightEndPosition = new ChessPosition(x, highY);
+                ChessPiece rightEnemy = board.getPiece(rightEndPosition);
                 if (rightEnemy == null || rightEnemy.getTeamColor() != color) {
                     moves.add(new ChessMove(myPosition, rightEndPosition, null));
                 }
