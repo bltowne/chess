@@ -26,7 +26,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             y++;
         }
 
-        if (y < 8) {
+        if (y <= 8) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {
@@ -46,7 +46,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             y--;
         }
 
-        if (y > 1) {
+        if (y >= 1) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {
@@ -66,7 +66,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             x++;
         }
 
-        if (x < 8) {
+        if (x <= 8) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {
@@ -86,7 +86,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             x--;
         }
 
-        if (x > 1) {
+        if (x >= 1) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {

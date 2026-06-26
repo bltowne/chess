@@ -27,7 +27,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             y++;
         }
 
-        if (x < 8 && y < 8) {
+        if (x <= 8 && y <= 8) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {
@@ -48,7 +48,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             y++;
         }
 
-        if (x > 1 && y < 8) {
+        if (x >= 1 && y <= 8) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {
@@ -69,7 +69,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             y--;
         }
 
-        if (x < 8 && y > 1) {
+        if (x <= 8 && y >= 1) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {
@@ -90,7 +90,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             y--;
         }
 
-        if (x > 1 && y > 1) {
+        if (x >= 1 && y >= 1) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
             if (piece != null) {
