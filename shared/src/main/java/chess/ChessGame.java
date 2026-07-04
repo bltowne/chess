@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -78,19 +79,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece piece = board.getPiece(startPosition);
-        if (piece == null) {
-            return null;
-        }
-        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
-        for (ChessMove move : moves) {
-            ChessBoard tempBoard = copyBoard();
-            moving(move, tempBoard);
-            if (checkKing(color, tempBoard) || checkKingCheckmate(color, tempBoard)) {
-                moves.remove(move);
-            }
-        }
-        return moves;
+        return compileMoves(startPosition, board, color);
     }
 
     /**
@@ -165,6 +154,26 @@ public class ChessGame {
         return null;
     }
 
+    private Collection<ChessMove> compileMoves(ChessPosition position, ChessBoard testBoard, TeamColor color) {
+        ChessPiece piece = testBoard.getPiece(position);
+        if (piece == null) {
+            return null;
+        }
+        Collection<ChessMove> moves = piece.pieceMoves(testBoard, position);
+        Collection<ChessMove> removeMoves = new ArrayList<ChessMove>();
+        for (ChessMove move : moves) {
+            ChessBoard tempBoard = copyBoard();
+            moving(move, tempBoard);
+            if (checkKing(color, tempBoard)) {
+                removeMoves.add(move);
+            }
+        }
+        for (ChessMove move : removeMoves) {
+            moves.remove(move);
+        }
+        return moves;
+    }
+
     private boolean checkKing(TeamColor teamColor, ChessBoard testBoard) {
         ChessPosition kingPosition = findKing(teamColor, testBoard);
         for (int i = 1; i <= 8; i++) {
@@ -205,10 +214,13 @@ public class ChessGame {
                 ChessPosition testPosition = new ChessPosition (i, j);
                 ChessPiece testPiece = testBoard.getPiece(testPosition);
                 if (testPiece != null && testPiece.getTeamColor() == teamColor) {
-
+                    if (!compileMoves(testPosition, testBoard, teamColor).isEmpty()) {
+                        return false;
+                    }
                 }
             }
         }
+        return true;
     }
 
     private void moving(ChessMove move, ChessBoard board) {
