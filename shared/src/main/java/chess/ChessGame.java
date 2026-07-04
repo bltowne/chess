@@ -89,9 +89,20 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        Collection<ChessMove> moves = validMoves(move.getStartPosition());
-        if (moves.contains(move)) {
+        ChessPosition position = move.getStartPosition();
+        ChessPiece piece = board.getPiece(position);
+        Collection<ChessMove> moves = validMoves(position);
+        if (moves.contains(move) && piece.getTeamColor() == color) {
             moving(move, board);
+            if (move.getPromotionPiece() != null) {
+                ChessPiece promotionPiece = new ChessPiece(color, move.getPromotionPiece());
+                board.addPiece(move.getEndPosition(), promotionPiece);
+            }
+            if (color == TeamColor.WHITE) {
+                setTeamTurn(TeamColor.BLACK);
+            } else {
+                setTeamTurn(TeamColor.WHITE);
+            }
         } else {
             throw new InvalidMoveException();
         }
