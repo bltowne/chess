@@ -92,7 +92,7 @@ public class ChessGame {
         ChessPosition position = move.getStartPosition();
         ChessPiece piece = board.getPiece(position);
         Collection<ChessMove> moves = validMoves(position);
-        if (moves.contains(move) && piece.getTeamColor() == color) {
+        if (piece != null && moves.contains(move) && piece.getTeamColor() == color) {
             moving(move, board);
             if (move.getPromotionPiece() != null) {
                 ChessPiece promotionPiece = new ChessPiece(color, move.getPromotionPiece());
