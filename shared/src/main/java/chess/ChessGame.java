@@ -60,7 +60,7 @@ public class ChessGame {
         return Objects.hash(board, prevBoard, color);
     }
 
-    private ChessBoard copyBoard() {
+    private ChessBoard copyBoard(ChessBoard board) {
         ChessBoard newBoard = new ChessBoard();
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
@@ -79,7 +79,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return compileMoves(startPosition, board, color);
+        return compileMoves(startPosition, board);
     }
 
     /**
@@ -154,15 +154,16 @@ public class ChessGame {
         return null;
     }
 
-    private Collection<ChessMove> compileMoves(ChessPosition position, ChessBoard testBoard, TeamColor color) {
+    private Collection<ChessMove> compileMoves(ChessPosition position, ChessBoard testBoard) {
         ChessPiece piece = testBoard.getPiece(position);
         if (piece == null) {
             return null;
         }
+        TeamColor color = piece.getTeamColor();
         Collection<ChessMove> moves = piece.pieceMoves(testBoard, position);
         Collection<ChessMove> removeMoves = new ArrayList<>();
         for (ChessMove move : moves) {
-            ChessBoard tempBoard = copyBoard();
+            ChessBoard tempBoard = copyBoard(testBoard);
             moving(move, tempBoard);
             if (checkKing(color, tempBoard)) {
                 removeMoves.add(move);
@@ -213,7 +214,7 @@ public class ChessGame {
                 ChessPosition testPosition = new ChessPosition (i, j);
                 ChessPiece testPiece = testBoard.getPiece(testPosition);
                 if (testPiece != null && testPiece.getTeamColor() == teamColor) {
-                    if (!compileMoves(testPosition, testBoard, teamColor).isEmpty()) {
+                    if (!compileMoves(testPosition, testBoard).isEmpty()) {
                         return false;
                     }
                 }
