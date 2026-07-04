@@ -160,7 +160,7 @@ public class ChessGame {
             return null;
         }
         Collection<ChessMove> moves = piece.pieceMoves(testBoard, position);
-        Collection<ChessMove> removeMoves = new ArrayList<ChessMove>();
+        Collection<ChessMove> removeMoves = new ArrayList<>();
         for (ChessMove move : moves) {
             ChessBoard tempBoard = copyBoard();
             moving(move, tempBoard);
@@ -208,7 +208,6 @@ public class ChessGame {
     }
 
     private boolean allMovesMeanCheck(TeamColor teamColor, ChessBoard testBoard) {
-        ChessPosition kingPosition = findKing(teamColor, testBoard);
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition testPosition = new ChessPosition (i, j);
@@ -224,6 +223,10 @@ public class ChessGame {
     }
 
     private void moving(ChessMove move, ChessBoard board) {
-
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece piece = board.getPiece(startPosition);
+        board.addPiece(startPosition, null);
+        board.addPiece(endPosition, piece);
     }
 }
