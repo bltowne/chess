@@ -61,29 +61,38 @@ public class Server {
         ctx.status(200);
     }
 
-    private void login(Context ctx) {
+    private void login(Context ctx) throws ResponseException {
         LoginRequest request = new Gson().fromJson(ctx.body(), LoginRequest.class);
         LoginResult result = userService.login(request);
         ctx.result(new Gson().toJson(result));
         ctx.status(200);
     }
 
-    private void logout(Context ctx) {
+    private void logout(Context ctx) throws ResponseException {
         AuthTokenRequest request = new AuthTokenRequest(ctx.header("authorization"));
         userService.logout(request);
         ctx.status(200);
     }
 
-    private void listGames(Context ctx) {
+    private void listGames(Context ctx) throws ResponseException {
         AuthTokenRequest request = new AuthTokenRequest(ctx.header("authorization"));
         ListResult result = gameService.list(request);
         ctx.result(new Gson().toJson(result));
         ctx.status(200);
     }
 
-    private void createGame(Context ctx) {
-
+    private void createGame(Context ctx) throws ResponseException {
+        checkAuth(ctx);
+        CreateRequest request = new Gson().fromJson(ctx.body(), CreateRequest.class);
+        CreateResult result = gameService.create(request);
+        ctx.result(new Gson().toJson(result));
+        ctx.status(200);
     }
 
     private void joinGame(Context ctx) {}
+
+    private void checkAuth(Context ctx) {
+        String authToken = ctx.header("authorization");
+        userService.checkAuth(new AuthTokenRequest(authToken));
+    }
 }

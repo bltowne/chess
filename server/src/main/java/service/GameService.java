@@ -14,10 +14,15 @@ public class GameService {
         this.authAccess = authAccess;
     }
 
-//    public CreateResult create(CreateRequest r) {}
-//
+    public CreateResult create(CreateRequest r) {
+        if (r.gameName() == null) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
+        }
+        return new CreateResult(gameAccess.createGame(r.gameName()));
+    }
+
 //    public JoinResult join(JoinRequest r) {}
-//
+
     public ListResult list(AuthTokenRequest r) {
         AuthData auth = authAccess.getAuth(r.authToken());
         if (auth == null) {
