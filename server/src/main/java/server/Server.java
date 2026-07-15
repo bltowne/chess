@@ -1,5 +1,7 @@
 package server;
 
+import dataaccess.*;
+import exception.ResponseException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.ClearService;
@@ -14,9 +16,13 @@ public class Server {
     private final ClearService clearService;
 
     public Server() {
+        UserDAO userAccess = new MemoryUserDAO();
+        GameDAO gameAccess = new MemoryGameDAO();
+        AuthDAO authAccess = new MemoryAuthDAO();
+
         this.userService = new UserService();
         this.gameService = new GameService();
-        this.clearService = new ClearService();
+        this.clearService = new ClearService(userAccess, gameAccess, authAccess);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", this::clear)
@@ -25,7 +31,8 @@ public class Server {
                 .delete("/sesson", this::logout)
                 .get("/game", this::listGames)
                 .post("/game", this::createGame)
-                .put("/game", this::joinGame);
+                .put("/game", this::joinGame)
+                .exception(ResponseException.class, this::exceptionHandler);
     }
 
     public int run(int desiredPort) {
@@ -37,7 +44,15 @@ public class Server {
         javalin.stop();
     }
 
-    private void clear(Context ctx) {}
+    private void exceptionHandler(ResponseException ex, Context ctx) {
+        ctx.status(ex.toHttpStatusCode());
+        ctx.result(ex.toJson());
+    }
+
+    private void clear(Context ctx) throws ResponseException {
+        clearService.clear();
+        ctx.status(200);
+    }
 
     private void register(Context ctx) {}
 
