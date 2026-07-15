@@ -11,6 +11,7 @@ public class ResponseException extends RuntimeException {
         ServerError,
         ClientError,
         AlreadyTakenException,
+        Unauthorized,
     }
 
     final private Code code;
@@ -38,6 +39,7 @@ public class ResponseException extends RuntimeException {
             case 500 -> Code.ServerError;
             case 400 -> Code.ClientError;
             case 403 -> Code.AlreadyTakenException;
+            case 401 -> Code.Unauthorized;
             default -> throw new IllegalArgumentException("Unknown HTTP status code: " + httpStatusCode);
         };
     }
@@ -47,6 +49,7 @@ public class ResponseException extends RuntimeException {
             case ServerError -> 500;
             case ClientError -> 400;
             case AlreadyTakenException -> 403;
+            case Unauthorized -> 401;
         };
     }
 }

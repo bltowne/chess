@@ -5,11 +5,8 @@ import dataaccess.*;
 import exception.ResponseException;
 import io.javalin.*;
 import io.javalin.http.Context;
-import model.RegisterRequest;
-import model.RegisterResult;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
+import model.*;
+import service.*;
 
 public class Server {
 
@@ -61,9 +58,15 @@ public class Server {
         RegisterRequest request = new Gson().fromJson(ctx.body(), RegisterRequest.class);
         RegisterResult result = userService.register(request);
         ctx.result(new Gson().toJson(result));
+        ctx.status(200);
     }
 
-    private void login(Context ctx) {}
+    private void login(Context ctx) {
+        LoginRequest request = new Gson().fromJson(ctx.body(), LoginRequest.class);
+        LoginResult result = userService.login(request);
+        ctx.result(new Gson().toJson(result));
+        ctx.status(200);
+    }
 
     private void logout(Context ctx) {}
 
