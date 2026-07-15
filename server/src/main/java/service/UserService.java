@@ -39,8 +39,14 @@ public class UserService {
         AuthData auth = authAccess.createAuth(r.username());
         return new LoginResult(r.username(), auth.authToken());
     }
-//
-//    public LogoutResult logout(LogoutRequest r) {}
+
+    public void logout(LogoutRequest r) {
+        AuthData auth = authAccess.getAuth(r.authToken());
+        if (auth == null) {
+            throw new ResponseException(ResponseException.Code.Unauthorized, "Error: unauthorized");
+        }
+        authAccess.deleteAuth(auth);
+    }
 
 
     private boolean comparePasswords(String savedPassword, String submittedPassword) {

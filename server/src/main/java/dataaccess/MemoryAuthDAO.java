@@ -12,14 +12,29 @@ public class MemoryAuthDAO implements AuthDAO {
     final private Collection<AuthData> auths = new ArrayList<>();
 
     public AuthData createAuth(String username) throws ResponseException {
-        return new AuthData(generateToken(), username);
+        AuthData auth = new AuthData(generateToken(), username);
+        auths.add(auth);
+        return auth;
     }
 
-    public Collection<AuthData> listAuth() {return auths;}
+    public AuthData getAuth(String authToken) throws ResponseException {
+        for (AuthData auth : auths) {
+            if (auth.authToken().equals(authToken)) {
+                return auth;
+            }
+        }
+        return null;
+    }
 
-    public void deleteAllAuth() {auths.clear();}
+    public void deleteAuth(AuthData authData) throws ResponseException {
+        auths.removeIf(auth -> auth.authToken().equals(authData.authToken()));
+    }
 
-    private static String generateToken() {
+    public Collection<AuthData> listAuth() throws ResponseException {return auths;}
+
+    public void deleteAllAuth() throws ResponseException {auths.clear();}
+
+    private static String generateToken() throws ResponseException {
         return UUID.randomUUID().toString();
     }
 }

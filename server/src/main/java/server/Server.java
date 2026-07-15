@@ -28,7 +28,7 @@ public class Server {
                 .delete("/db", this::clear)
                 .post("/user", this::register)
                 .post("/session", this::login)
-                .delete("/sesson", this::logout)
+                .delete("/session", this::logout)
                 .get("/game", this::listGames)
                 .post("/game", this::createGame)
                 .put("/game", this::joinGame)
@@ -68,7 +68,12 @@ public class Server {
         ctx.status(200);
     }
 
-    private void logout(Context ctx) {}
+    private void logout(Context ctx) {
+//        LogoutRequest request = new Gson().fromJson(ctx.header("authorization"), LogoutRequest.class);
+        LogoutRequest request = new LogoutRequest(ctx.header("authorization"));
+        userService.logout(request);
+        ctx.status(200);
+    }
 
     private void listGames(Context ctx) {}
 

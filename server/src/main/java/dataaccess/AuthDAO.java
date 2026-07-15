@@ -8,6 +8,10 @@ import java.util.Collection;
 public interface AuthDAO {
     AuthData createAuth(String username) throws ResponseException;
 
+    AuthData getAuth(String AuthToken) throws ResponseException;
+
+    void deleteAuth(AuthData authData) throws ResponseException;
+
     Collection<AuthData> listAuth() throws ResponseException;
 
     void deleteAllAuth() throws ResponseException;
