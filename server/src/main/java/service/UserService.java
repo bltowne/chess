@@ -48,11 +48,12 @@ public class UserService {
         authAccess.deleteAuth(auth);
     }
 
-    public void checkAuth(AuthTokenRequest r) {
+    public AuthData checkAuth(AuthTokenRequest r) {
         AuthData auth = authAccess.getAuth(r.authToken());
         if (auth == null) {
             throw new ResponseException(ResponseException.Code.Unauthorized, "Error: unauthorized");
         }
+        return auth;
     }
 
     private boolean comparePasswords(String savedPassword, String submittedPassword) {

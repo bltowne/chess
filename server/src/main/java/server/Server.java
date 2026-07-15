@@ -89,10 +89,16 @@ public class Server {
         ctx.status(200);
     }
 
-    private void joinGame(Context ctx) {}
+    private void joinGame(Context ctx) {
+        AuthData auth = checkAuth(ctx);
+        JoinRequest request = new Gson().fromJson(ctx.body(), JoinRequest.class);
+        gameService.join(request, auth);
+        ctx.status(200);
+    }
 
-    private void checkAuth(Context ctx) {
+    private AuthData checkAuth(Context ctx) {
         String authToken = ctx.header("authorization");
-        userService.checkAuth(new AuthTokenRequest(authToken));
+        AuthData auth = userService.checkAuth(new AuthTokenRequest(authToken));
+        return auth;
     }
 }

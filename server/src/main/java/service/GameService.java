@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import exception.ResponseException;
 import model.*;
@@ -21,7 +22,16 @@ public class GameService {
         return new CreateResult(gameAccess.createGame(r.gameName()));
     }
 
-//    public JoinResult join(JoinRequest r) {}
+    public void join(JoinRequest r, AuthData auth) {
+        GameData game = gameAccess.findGame(r.gameID());
+        if (game == null || (r.playerColor() != ChessGame.TeamColor.WHITE && r.playerColor() != ChessGame.TeamColor.BLACK)) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
+        }
+        if (!gameAccess.checkColor(game, r.playerColor())) {
+            throw new ResponseException(ResponseException.Code.AlreadyTakenException, "Error: already taken");
+        }
+        gameAccess.joinGame(game, r.playerColor(), auth.username());
+    }
 
     public ListResult list(AuthTokenRequest r) {
         AuthData auth = authAccess.getAuth(r.authToken());
