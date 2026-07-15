@@ -40,7 +40,7 @@ public class UserService {
         return new LoginResult(r.username(), auth.authToken());
     }
 
-    public void logout(LogoutRequest r) {
+    public void logout(AuthTokenRequest r) {
         AuthData auth = authAccess.getAuth(r.authToken());
         if (auth == null) {
             throw new ResponseException(ResponseException.Code.Unauthorized, "Error: unauthorized");

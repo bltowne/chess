@@ -21,7 +21,7 @@ public class Server {
         AuthDAO authAccess = new MemoryAuthDAO();
 
         this.userService = new UserService(userAccess, authAccess);
-        this.gameService = new GameService();
+        this.gameService = new GameService(gameAccess, authAccess);
         this.clearService = new ClearService(userAccess, gameAccess, authAccess);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -69,15 +69,21 @@ public class Server {
     }
 
     private void logout(Context ctx) {
-//        LogoutRequest request = new Gson().fromJson(ctx.header("authorization"), LogoutRequest.class);
-        LogoutRequest request = new LogoutRequest(ctx.header("authorization"));
+        AuthTokenRequest request = new AuthTokenRequest(ctx.header("authorization"));
         userService.logout(request);
         ctx.status(200);
     }
 
-    private void listGames(Context ctx) {}
+    private void listGames(Context ctx) {
+        AuthTokenRequest request = new AuthTokenRequest(ctx.header("authorization"));
+        ListResult result = gameService.list(request);
+        ctx.result(new Gson().toJson(result));
+        ctx.status(200);
+    }
 
-    private void createGame(Context ctx) {}
+    private void createGame(Context ctx) {
+
+    }
 
     private void joinGame(Context ctx) {}
 }
