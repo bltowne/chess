@@ -1,9 +1,12 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ResponseException;
 import io.javalin.*;
 import io.javalin.http.Context;
+import model.RegisterRequest;
+import model.RegisterResult;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -20,7 +23,7 @@ public class Server {
         GameDAO gameAccess = new MemoryGameDAO();
         AuthDAO authAccess = new MemoryAuthDAO();
 
-        this.userService = new UserService();
+        this.userService = new UserService(userAccess, authAccess);
         this.gameService = new GameService();
         this.clearService = new ClearService(userAccess, gameAccess, authAccess);
 
@@ -54,7 +57,11 @@ public class Server {
         ctx.status(200);
     }
 
-    private void register(Context ctx) {}
+    private void register(Context ctx) throws ResponseException {
+        RegisterRequest request = new Gson().fromJson(ctx.body(), RegisterRequest.class);
+        RegisterResult result = userService.register(request);
+        ctx.result(new Gson().toJson(result));
+    }
 
     private void login(Context ctx) {}
 
