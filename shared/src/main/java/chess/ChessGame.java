@@ -198,13 +198,20 @@ public class ChessGame {
                 ChessPosition testPosition = new ChessPosition(i, j);
                 ChessPiece testPiece = testBoard.getPiece(testPosition);
                 if (testPiece != null && testPiece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = testPiece.pieceMoves(testBoard, testPosition);
-                    for (ChessMove move : moves) {
-                        if (move.getEndPosition().equals(kingPosition)) {
-                            return true;
-                        }
+                    if (isOnKingPosition(testBoard, testPiece, testPosition, kingPosition)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isOnKingPosition(ChessBoard testBoard, ChessPiece testPiece, ChessPosition testPosition, ChessPosition kingPosition) {
+        Collection<ChessMove> moves = testPiece.pieceMoves(testBoard, testPosition);
+        for (ChessMove move : moves) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
             }
         }
         return false;

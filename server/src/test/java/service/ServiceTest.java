@@ -13,24 +13,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ServiceTest {
 
-    static final UserDAO userAccess = new MemoryUserDAO();
-    static final GameDAO gameAccess = new MemoryGameDAO();
-    static final AuthDAO authAccess = new MemoryAuthDAO();
-    static final UserService userService = new UserService(userAccess, authAccess);
-    static final GameService gameService = new GameService(gameAccess, authAccess);
-    static final ClearService clearService = new ClearService(userAccess, gameAccess, authAccess);
+    static final UserDAO USER_ACCESS = new MemoryUserDAO();
+    static final GameDAO GAME_ACCESS = new MemoryGameDAO();
+    static final AuthDAO AUTH_ACCESS = new MemoryAuthDAO();
+    static final UserService USER_SERVICE = new UserService(USER_ACCESS, AUTH_ACCESS);
+    static final GameService GAME_SERVICE = new GameService(GAME_ACCESS, AUTH_ACCESS);
+    static final ClearService CLEAR_SERVICE = new ClearService(USER_ACCESS, GAME_ACCESS, AUTH_ACCESS);
 
     @BeforeEach
     void reset() throws ResponseException {
-        clearService.clear();
-        userService.register(new RegisterRequest("username", "password", "email"));
+        CLEAR_SERVICE.clear();
+        USER_SERVICE.register(new RegisterRequest("username", "password", "email"));
     }
 
     @Test
     void registerPositive() throws ResponseException {
-        RegisterResult actual = userService.register(new RegisterRequest("second", "awesome", "gmail"));
+        RegisterResult actual = USER_SERVICE.register(new RegisterRequest("second", "awesome", "gmail"));
         RegisterResult expected = new RegisterResult("second", "authToken");
-        Collection<UserData> actualUsers = userAccess.listUsers();
+        Collection<UserData> actualUsers = USER_ACCESS.listUsers();
 
         assertEquals(2, actualUsers.size());
         assertEquals(actual.username(), expected.username());
@@ -38,14 +38,14 @@ class ServiceTest {
 
     @Test
     void registerNegative() throws ResponseException {
-        assertThrows(ResponseException.class, () -> userService.register(new RegisterRequest("username", null, "email")));
+        assertThrows(ResponseException.class, () -> USER_SERVICE.register(new RegisterRequest("username", null, "email")));
     }
 
     @Test
     void loginPositive() throws ResponseException {
-        LoginResult actual = userService.login(new LoginRequest("username", "password"));
+        LoginResult actual = USER_SERVICE.login(new LoginRequest("username", "password"));
         LoginResult expected = new LoginResult("username", "authToken");
-        Collection<AuthData> auths = authAccess.listAuth();
+        Collection<AuthData> auths = AUTH_ACCESS.listAuth();
 
         assertEquals(2, auths.size());
         assertEquals(actual.username(), expected.username());
@@ -53,30 +53,30 @@ class ServiceTest {
 
     @Test
     void loginNegative() throws ResponseException {
-        assertThrows(ResponseException.class, () -> userService.login(new LoginRequest("username", "wrong")));
+        assertThrows(ResponseException.class, () -> USER_SERVICE.login(new LoginRequest("username", "wrong")));
     }
 
     @Test
     void logoutPositive() throws ResponseException {
-        LoginResult loggedIn = userService.login(new LoginRequest("username", "password"));
-        Collection<AuthData> authsBefore = authAccess.listAuth();
+        LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
+        Collection<AuthData> authsBefore = AUTH_ACCESS.listAuth();
         assertEquals(2, authsBefore.size());
 
-        userService.logout(new AuthTokenRequest(loggedIn.authToken()));
-        Collection<AuthData> authsAfter = authAccess.listAuth();
+        USER_SERVICE.logout(new AuthTokenRequest(loggedIn.authToken()));
+        Collection<AuthData> authsAfter = AUTH_ACCESS.listAuth();
         assertEquals(1, authsAfter.size());
     }
 
     @Test
     void logoutNegative() throws ResponseException{
-        assertThrows(ResponseException.class, () -> userService.logout(new AuthTokenRequest("wrong")));
+        assertThrows(ResponseException.class, () -> USER_SERVICE.logout(new AuthTokenRequest("wrong")));
     }
 
     @Test
     void checkAuthPositive() throws ResponseException {
-        LoginResult loggedIn = userService.login(new LoginRequest("username", "password"));
+        LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
         String authToken = loggedIn.authToken();
-        AuthData actual = userService.checkAuth(new AuthTokenRequest(authToken));
+        AuthData actual = USER_SERVICE.checkAuth(new AuthTokenRequest(authToken));
         AuthData expected = new AuthData(authToken, "username");
 
         assertEquals(expected.authToken(), actual.authToken());
@@ -85,29 +85,29 @@ class ServiceTest {
 
     @Test
     void checkAuthNegative() throws ResponseException {
-        assertThrows(ResponseException.class, () -> userService.checkAuth(new AuthTokenRequest(null)));
+        assertThrows(ResponseException.class, () -> USER_SERVICE.checkAuth(new AuthTokenRequest(null)));
     }
 
     @Test
     void createPositive() throws ResponseException {
-        gameService.create(new CreateRequest("new game"));
-        Collection<GameData> actual = gameAccess.listGames();
+        GAME_SERVICE.create(new CreateRequest("new game"));
+        Collection<GameData> actual = GAME_ACCESS.listGames();
 
         assertEquals(1, actual.size());
     }
 
     @Test
     void createNegative() throws ResponseException {
-        assertThrows(ResponseException.class, () -> gameService.create(new CreateRequest(null)));
+        assertThrows(ResponseException.class, () -> GAME_SERVICE.create(new CreateRequest(null)));
     }
 
     @Test
     void joinPositive() throws ResponseException {
-        LoginResult loggedIn = userService.login(new LoginRequest("username", "password"));
-        AuthData auth = userService.checkAuth(new AuthTokenRequest(loggedIn.authToken()));
-        CreateResult created = gameService.create(new CreateRequest("name"));
-        gameService.join(new JoinRequest(ChessGame.TeamColor.WHITE, created.gameID()), auth);
-        GameData game = gameAccess.findGame(created.gameID());
+        LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
+        AuthData auth = USER_SERVICE.checkAuth(new AuthTokenRequest(loggedIn.authToken()));
+        CreateResult created = GAME_SERVICE.create(new CreateRequest("name"));
+        GAME_SERVICE.join(new JoinRequest(ChessGame.TeamColor.WHITE, created.gameID()), auth);
+        GameData game = GAME_ACCESS.findGame(created.gameID());
 
         assertEquals("username", game.whiteUsername());
         assertNull(game.blackUsername());
@@ -115,41 +115,41 @@ class ServiceTest {
 
     @Test
     void joinNegative() throws ResponseException {
-        LoginResult loggedIn = userService.login(new LoginRequest("username", "password"));
-        AuthData auth = userService.checkAuth(new AuthTokenRequest(loggedIn.authToken()));
-        CreateResult created = gameService.create(new CreateRequest("name"));
-        gameService.join(new JoinRequest(ChessGame.TeamColor.WHITE, created.gameID()), auth);
+        LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
+        AuthData auth = USER_SERVICE.checkAuth(new AuthTokenRequest(loggedIn.authToken()));
+        CreateResult created = GAME_SERVICE.create(new CreateRequest("name"));
+        GAME_SERVICE.join(new JoinRequest(ChessGame.TeamColor.WHITE, created.gameID()), auth);
 
-        RegisterResult registered = userService.register(new RegisterRequest("second", "password", "gmail"));
-        AuthData secondAuth = userService.checkAuth(new AuthTokenRequest(registered.authToken()));
-        assertThrows(ResponseException.class, () -> gameService.join(new JoinRequest(ChessGame.TeamColor.WHITE, created.gameID()), secondAuth));
+        RegisterResult registered = USER_SERVICE.register(new RegisterRequest("second", "password", "gmail"));
+        AuthData secondAuth = USER_SERVICE.checkAuth(new AuthTokenRequest(registered.authToken()));
+        assertThrows(ResponseException.class, () -> GAME_SERVICE.join(new JoinRequest(ChessGame.TeamColor.WHITE, created.gameID()), secondAuth));
     }
 
     @Test
     void listPositive() throws ResponseException {
-        LoginResult loggedIn = userService.login(new LoginRequest("username", "password"));
-        gameService.create(new CreateRequest("name"));
-        ListResult actual = gameService.list(new AuthTokenRequest(loggedIn.authToken()));
+        LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
+        GAME_SERVICE.create(new CreateRequest("name"));
+        ListResult actual = GAME_SERVICE.list(new AuthTokenRequest(loggedIn.authToken()));
 
         assertEquals(1, actual.games().size());
     }
 
     @Test
     void listNegative() throws ResponseException {
-        assertThrows(ResponseException.class, () -> gameService.list(new AuthTokenRequest(null)));
+        assertThrows(ResponseException.class, () -> GAME_SERVICE.list(new AuthTokenRequest(null)));
     }
 
     @Test
     void clear() throws ResponseException {
-        userService.register(new RegisterRequest("user", "word", "gmail"));
-        gameService.create(new CreateRequest("game 1"));
-        gameService.create(new CreateRequest("game 2"));
-        gameService.create(new CreateRequest("game 3"));
+        USER_SERVICE.register(new RegisterRequest("user", "word", "gmail"));
+        GAME_SERVICE.create(new CreateRequest("game 1"));
+        GAME_SERVICE.create(new CreateRequest("game 2"));
+        GAME_SERVICE.create(new CreateRequest("game 3"));
 
-        clearService.clear();
-        Collection<UserData> users = userAccess.listUsers();
-        Collection<GameData> games = gameAccess.listGames();
-        Collection<AuthData> auths = authAccess.listAuth();
+        CLEAR_SERVICE.clear();
+        Collection<UserData> users = USER_ACCESS.listUsers();
+        Collection<GameData> games = GAME_ACCESS.listGames();
+        Collection<AuthData> auths = AUTH_ACCESS.listAuth();
 
         assertEquals(0, users.size());
         assertEquals(0, games.size());
