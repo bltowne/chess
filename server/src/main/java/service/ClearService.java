@@ -15,8 +15,6 @@ public class ClearService {
     private final GameDAO gameAccess;
     private final AuthDAO authAccess;
 
-//    public record ClearResult() {}
-
     public ClearService(UserDAO userAccess, GameDAO gameAccess, AuthDAO authAccess) {
         this.userAccess = userAccess;
         this.gameAccess = gameAccess;
