@@ -22,30 +22,15 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
 
     private void whiteCheckForEnemies(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         int x = myPosition.getRow() + 1;
-        int y = myPosition.getColumn();
-
-        int lowY = y - 1;
-        int highY = y + 1;
-
-        if (lowY >= 1) {
-            ChessPosition leftEndPosition = new ChessPosition(x, lowY);
-            ChessPiece leftEnemy = board.getPiece(leftEndPosition);
-            if (leftEnemy != null && leftEnemy.getTeamColor() != color) {
-                promotionCheck(moves, myPosition, leftEndPosition, color);
-            }
-        }
-
-        if (highY <= 8) {
-            ChessPosition rightEndPosition = new ChessPosition(x, highY);
-            ChessPiece rightEnemy = board.getPiece(rightEndPosition);
-            if (rightEnemy != null && rightEnemy.getTeamColor() != color) {
-                promotionCheck(moves, myPosition, rightEndPosition, color);
-            }
-        }
+        checkForEnemies(board, myPosition, color, moves, x);
     }
 
     private void blackCheckForEnemies(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
         int x = myPosition.getRow() - 1;
+        checkForEnemies(board, myPosition, color, moves, x);
+    }
+
+    private void checkForEnemies(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves, int x) {
         int y = myPosition.getColumn();
 
         int lowY = y - 1;
