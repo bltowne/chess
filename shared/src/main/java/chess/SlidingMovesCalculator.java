@@ -109,7 +109,8 @@ public class SlidingMovesCalculator implements PieceMovesCalculator {
         checkEndCases(board, myPosition, color, moves, x, y);
     }
 
-    private static void checkEndCases(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves, int x, int y) {
+    private static void checkEndCases(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves,
+                                      int x, int y) {
         if (x >= 1 && x <= 8 && y >= 1 && y <= 8) {
             ChessPosition endPosition = new ChessPosition(x, y);
             ChessPiece piece = board.getPiece(endPosition);
