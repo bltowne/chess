@@ -55,7 +55,8 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
         }
     }
 
-    private static void checkSides(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves, int side, int forward, String constant) {
+    private static void checkSides(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color, Collection<ChessMove> moves,
+                                   int side, int forward, String constant) {
         int leftSide = side - 1;
         if (leftSide >= 1) {
             ChessPosition leftEndPosition;
