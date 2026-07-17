@@ -63,10 +63,7 @@ public class MySqlUserDAO implements UserDAO {
     }
 
     private UserData readUser(ResultSet rs) throws SQLException {
-        var username = rs.getString("username");
-        var password = rs.getString("password");
-        var email = rs.getString("email");
-        return new UserData(username, password, email);
+        return new UserData(rs.getString("username"), rs.getString("password"), rs.getString("email"));
     }
 
     private boolean verifyUser(ResultSet rs, String providedClearTextPassword) throws SQLException {
