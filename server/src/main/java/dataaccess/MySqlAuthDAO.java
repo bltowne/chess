@@ -19,7 +19,7 @@ public class MySqlAuthDAO implements AuthDAO {
         configureDatabase();
     }
 
-    public AuthData createAuth(String username) throws ResponseException, DataAccessException {
+    public AuthData createAuth(String username) throws ResponseException {
         var statement = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
         String authToken = UUID.randomUUID().toString();
         executeUpdate(statement, authToken, username);
@@ -43,7 +43,7 @@ public class MySqlAuthDAO implements AuthDAO {
         return null;
     }
 
-    public void deleteAuth(AuthData authData) throws ResponseException, DataAccessException {
+    public void deleteAuth(AuthData authData) throws ResponseException {
         var statement = "DELETE FROM auths WHERE authToken=?";
         executeUpdate(statement, authData.authToken());
     }
@@ -65,7 +65,7 @@ public class MySqlAuthDAO implements AuthDAO {
         return result;
     }
 
-    public void deleteAllAuth() throws DataAccessException {
+    public void deleteAllAuth() {
         var statement = "TRUNCATE auths";
         executeUpdate(statement);
     }
@@ -74,7 +74,7 @@ public class MySqlAuthDAO implements AuthDAO {
         return new AuthData(rs.getString("authToken"), rs.getString("username"));
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private void executeUpdate(String statement, Object... params) {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
@@ -82,15 +82,8 @@ public class MySqlAuthDAO implements AuthDAO {
                     if (param instanceof String p) ps.setString(i + 1, p);
                 }
                 ps.executeUpdate();
-
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
-                return 0;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ResponseException(ResponseException.Code.ServerError, String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
@@ -113,7 +106,7 @@ public class MySqlAuthDAO implements AuthDAO {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }

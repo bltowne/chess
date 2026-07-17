@@ -49,26 +49,26 @@ public class Server {
         ctx.result(ex.toJson());
     }
 
-    private void clear(Context ctx) throws ResponseException, DataAccessException {
+    private void clear(Context ctx) throws ResponseException {
         clearService.clear();
         ctx.status(200);
     }
 
-    private void register(Context ctx) throws ResponseException, DataAccessException {
+    private void register(Context ctx) throws ResponseException {
         RegisterRequest request = new Gson().fromJson(ctx.body(), RegisterRequest.class);
         RegisterResult result = userService.register(request);
         ctx.result(new Gson().toJson(result));
         ctx.status(200);
     }
 
-    private void login(Context ctx) throws ResponseException, DataAccessException {
+    private void login(Context ctx) throws ResponseException {
         LoginRequest request = new Gson().fromJson(ctx.body(), LoginRequest.class);
         LoginResult result = userService.login(request);
         ctx.result(new Gson().toJson(result));
         ctx.status(200);
     }
 
-    private void logout(Context ctx) throws ResponseException, DataAccessException {
+    private void logout(Context ctx) throws ResponseException {
         AuthTokenRequest request = new AuthTokenRequest(ctx.header("authorization"));
         userService.logout(request);
         ctx.status(200);
@@ -81,7 +81,7 @@ public class Server {
         ctx.status(200);
     }
 
-    private void createGame(Context ctx) throws ResponseException, DataAccessException {
+    private void createGame(Context ctx) throws ResponseException {
         checkAuth(ctx);
         CreateRequest request = new Gson().fromJson(ctx.body(), CreateRequest.class);
         CreateResult result = gameService.create(request);
@@ -89,16 +89,15 @@ public class Server {
         ctx.status(200);
     }
 
-    private void joinGame(Context ctx) throws DataAccessException {
+    private void joinGame(Context ctx) throws ResponseException {
         AuthData auth = checkAuth(ctx);
         JoinRequest request = new Gson().fromJson(ctx.body(), JoinRequest.class);
         gameService.join(request, auth);
         ctx.status(200);
     }
 
-    private AuthData checkAuth(Context ctx) {
+    private AuthData checkAuth(Context ctx) throws ResponseException {
         String authToken = ctx.header("authorization");
-        AuthData auth = userService.checkAuth(new AuthTokenRequest(authToken));
-        return auth;
+        return userService.checkAuth(new AuthTokenRequest(authToken));
     }
 }

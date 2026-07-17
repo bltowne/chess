@@ -34,7 +34,7 @@ public class MySqlUserDAO implements UserDAO {
         return null;
     }
 
-    public void createUser(RegisterRequest r) throws ResponseException, DataAccessException {
+    public void createUser(RegisterRequest r) throws ResponseException {
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         String hashedPassword = BCrypt.hashpw(r.password(), BCrypt.gensalt());
         executeUpdate(statement, r.username(), hashedPassword, r.email());
@@ -57,7 +57,7 @@ public class MySqlUserDAO implements UserDAO {
         return result;
     }
 
-    public void deleteAllUsers() throws ResponseException, DataAccessException {
+    public void deleteAllUsers() throws ResponseException {
         var statement = "TRUNCATE users";
         executeUpdate(statement);
     }
@@ -70,7 +70,7 @@ public class MySqlUserDAO implements UserDAO {
         return BCrypt.checkpw(providedClearTextPassword, rs.getString("password"));
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private void executeUpdate(String statement, Object... params) {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
@@ -78,15 +78,8 @@ public class MySqlUserDAO implements UserDAO {
                     if (param instanceof String p) ps.setString(i + 1, p);
                 }
                 ps.executeUpdate();
-
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
-                return 0;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ResponseException(ResponseException.Code.ServerError, String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
@@ -110,7 +103,7 @@ public class MySqlUserDAO implements UserDAO {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }

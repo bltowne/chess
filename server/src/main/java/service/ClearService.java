@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.ResponseException;
@@ -23,27 +22,27 @@ public class ClearService {
         this.authAccess = authAccess;
     }
 
-    public void clear() throws ResponseException, DataAccessException {
+    public void clear() throws ResponseException {
         deleteAllUsers();
         deleteAllGames();
         deleteAllAuth();
     }
 
-    private void deleteAllUsers() throws ResponseException, DataAccessException {
+    private void deleteAllUsers() throws ResponseException {
         Collection<UserData> users = userAccess.listUsers();
         if (!users.isEmpty()) {
             userAccess.deleteAllUsers();
         }
     }
 
-    private void deleteAllGames() throws ResponseException, DataAccessException {
+    private void deleteAllGames() throws ResponseException {
         Collection<GameData> games = gameAccess.listGames();
         if (!games.isEmpty()) {
             gameAccess.deleteAllGames();
         }
     }
 
-    private void deleteAllAuth() throws ResponseException, DataAccessException {
+    private void deleteAllAuth() throws ResponseException {
         Collection<AuthData> auths = authAccess.listAuth();
         if (!auths.isEmpty()) {
             authAccess.deleteAllAuth();

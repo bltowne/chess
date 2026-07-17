@@ -7,15 +7,15 @@ import model.GameData;
 import java.util.Collection;
 
 public interface GameDAO {
-    int createGame(String gameName) throws ResponseException, DataAccessException;
+    int createGame(String gameName) throws ResponseException;
 
     GameData findGame(int gameID) throws ResponseException;
 
     boolean checkColor(GameData game, ChessGame.TeamColor color) throws ResponseException;
 
-    void joinGame(GameData game, ChessGame.TeamColor color, String username) throws ResponseException, DataAccessException;
+    void joinGame(GameData game, ChessGame.TeamColor color, String username) throws ResponseException;
 
     Collection<GameData> listGames() throws ResponseException;
 
-    void deleteAllGames() throws ResponseException, DataAccessException;
+    void deleteAllGames() throws ResponseException;
 }

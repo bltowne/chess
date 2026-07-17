@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import exception.ResponseException;
 import model.*;
@@ -16,7 +15,7 @@ public class UserService {
         this.authAccess = authAccess;
     }
 
-    public RegisterResult register(RegisterRequest r) throws DataAccessException {
+    public RegisterResult register(RegisterRequest r) throws ResponseException {
         if (r.username() == null || r.password() == null || r.email() == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
         }
@@ -29,7 +28,7 @@ public class UserService {
         return new RegisterResult(r.username(), auth.authToken());
     }
 
-    public LoginResult login(LoginRequest r) throws DataAccessException {
+    public LoginResult login(LoginRequest r) throws ResponseException {
         if (r.username() == null || r.password() == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
         }
@@ -41,7 +40,7 @@ public class UserService {
         return new LoginResult(r.username(), auth.authToken());
     }
 
-    public void logout(AuthTokenRequest r) throws DataAccessException {
+    public void logout(AuthTokenRequest r) throws ResponseException {
         AuthData auth = authAccess.getAuth(r.authToken());
         if (auth == null) {
             throw new ResponseException(ResponseException.Code.Unauthorized, "Error: unauthorized");
@@ -49,15 +48,11 @@ public class UserService {
         authAccess.deleteAuth(auth);
     }
 
-    public AuthData checkAuth(AuthTokenRequest r) {
+    public AuthData checkAuth(AuthTokenRequest r) throws ResponseException {
         AuthData auth = authAccess.getAuth(r.authToken());
         if (auth == null) {
             throw new ResponseException(ResponseException.Code.Unauthorized, "Error: unauthorized");
         }
         return auth;
-    }
-
-    private boolean comparePasswords(String savedPassword, String submittedPassword) {
-        return savedPassword.equals(submittedPassword);
     }
 }

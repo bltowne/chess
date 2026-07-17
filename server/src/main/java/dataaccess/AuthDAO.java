@@ -6,13 +6,13 @@ import model.AuthData;
 import java.util.Collection;
 
 public interface AuthDAO {
-    AuthData createAuth(String username) throws ResponseException, DataAccessException;
+    AuthData createAuth(String username) throws ResponseException;
 
     AuthData getAuth(String authToken) throws ResponseException;
 
-    void deleteAuth(AuthData authData) throws ResponseException, DataAccessException;
+    void deleteAuth(AuthData authData) throws ResponseException;
 
     Collection<AuthData> listAuth() throws ResponseException;
 
-    void deleteAllAuth() throws ResponseException, DataAccessException;
+    void deleteAllAuth() throws ResponseException;
 }
