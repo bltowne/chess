@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface UserDAO {
     UserData getUser(String name) throws ResponseException;
 
-    void createUser(RegisterRequest r) throws ResponseException;
+    void createUser(RegisterRequest r) throws ResponseException, DataAccessException;
 
     Collection<UserData> listUsers() throws ResponseException;
 

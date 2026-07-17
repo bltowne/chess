@@ -15,14 +15,14 @@ public class GameService {
         this.authAccess = authAccess;
     }
 
-    public CreateResult create(CreateRequest r) {
+    public CreateResult create(CreateRequest r) throws DataAccessException {
         if (r.gameName() == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
         }
         return new CreateResult(gameAccess.createGame(r.gameName()));
     }
 
-    public void join(JoinRequest r, AuthData auth) {
+    public void join(JoinRequest r, AuthData auth) throws DataAccessException {
         GameData game = gameAccess.findGame(r.gameID());
         if (game == null || (r.playerColor() != ChessGame.TeamColor.WHITE && r.playerColor() != ChessGame.TeamColor.BLACK)) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");

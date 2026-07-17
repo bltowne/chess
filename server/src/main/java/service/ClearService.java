@@ -29,7 +29,7 @@ public class ClearService {
         deleteAllAuth();
     }
 
-    private void deleteAllUsers() {
+    private void deleteAllUsers() throws ResponseException, DataAccessException {
         Collection<UserData> users = userAccess.listUsers();
         if (!users.isEmpty()) {
             userAccess.deleteAllUsers();

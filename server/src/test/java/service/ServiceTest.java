@@ -27,7 +27,7 @@ class ServiceTest {
     }
 
     @Test
-    void registerPositive() throws ResponseException {
+    void registerPositive() throws ResponseException, DataAccessException {
         RegisterResult actual = USER_SERVICE.register(new RegisterRequest("second", "awesome", "gmail"));
         RegisterResult expected = new RegisterResult("second", "authToken");
         Collection<UserData> actualUsers = USER_ACCESS.listUsers();
@@ -42,7 +42,7 @@ class ServiceTest {
     }
 
     @Test
-    void loginPositive() throws ResponseException {
+    void loginPositive() throws ResponseException, DataAccessException {
         LoginResult actual = USER_SERVICE.login(new LoginRequest("username", "password"));
         LoginResult expected = new LoginResult("username", "authToken");
         Collection<AuthData> auths = AUTH_ACCESS.listAuth();
@@ -57,7 +57,7 @@ class ServiceTest {
     }
 
     @Test
-    void logoutPositive() throws ResponseException {
+    void logoutPositive() throws ResponseException, DataAccessException {
         LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
         Collection<AuthData> authsBefore = AUTH_ACCESS.listAuth();
         assertEquals(2, authsBefore.size());
@@ -73,7 +73,7 @@ class ServiceTest {
     }
 
     @Test
-    void checkAuthPositive() throws ResponseException {
+    void checkAuthPositive() throws ResponseException, DataAccessException {
         LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
         String authToken = loggedIn.authToken();
         AuthData actual = USER_SERVICE.checkAuth(new AuthTokenRequest(authToken));
@@ -89,7 +89,7 @@ class ServiceTest {
     }
 
     @Test
-    void createPositive() throws ResponseException {
+    void createPositive() throws ResponseException, DataAccessException {
         GAME_SERVICE.create(new CreateRequest("new game"));
         Collection<GameData> actual = GAME_ACCESS.listGames();
 
@@ -102,7 +102,7 @@ class ServiceTest {
     }
 
     @Test
-    void joinPositive() throws ResponseException {
+    void joinPositive() throws ResponseException, DataAccessException {
         LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
         AuthData auth = USER_SERVICE.checkAuth(new AuthTokenRequest(loggedIn.authToken()));
         CreateResult created = GAME_SERVICE.create(new CreateRequest("name"));
@@ -114,7 +114,7 @@ class ServiceTest {
     }
 
     @Test
-    void joinNegative() throws ResponseException {
+    void joinNegative() throws ResponseException, DataAccessException {
         LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
         AuthData auth = USER_SERVICE.checkAuth(new AuthTokenRequest(loggedIn.authToken()));
         CreateResult created = GAME_SERVICE.create(new CreateRequest("name"));
@@ -126,7 +126,7 @@ class ServiceTest {
     }
 
     @Test
-    void listPositive() throws ResponseException {
+    void listPositive() throws ResponseException, DataAccessException {
         LoginResult loggedIn = USER_SERVICE.login(new LoginRequest("username", "password"));
         GAME_SERVICE.create(new CreateRequest("name"));
         ListResult actual = GAME_SERVICE.list(new AuthTokenRequest(loggedIn.authToken()));

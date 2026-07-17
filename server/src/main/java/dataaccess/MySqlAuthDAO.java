@@ -17,11 +17,17 @@ public class MySqlAuthDAO implements AuthDAO {
         configureDatabase();
     }
 
-    public AuthData createAuth(String username) throws ResponseException {}
+    public AuthData createAuth(String username) throws ResponseException, DataAccessException {
+        var statement = "";
+        executeUpdate(statement);
+    }
 
     public AuthData getAuth(String authToken) throws ResponseException {}
 
-    public void deleteAuth(AuthData authData) throws ResponseException {}
+    public void deleteAuth(AuthData authData) throws ResponseException, DataAccessException {
+        var statement = "";
+        executeUpdate(statement);
+    }
 
     public Collection<AuthData> listAuth() throws ResponseException {}
 

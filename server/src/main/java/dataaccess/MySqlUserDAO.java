@@ -17,7 +17,10 @@ public class MySqlUserDAO implements UserDAO {
 
     public UserData getUser(String name) throws ResponseException {}
 
-    public void createUser(RegisterRequest r) throws ResponseException {}
+    public void createUser(RegisterRequest r) throws ResponseException, DataAccessException {
+        var statement = "";
+        executeUpdate(statement);
+    }
 
     public Collection<UserData> listUsers() throws ResponseException {}
 

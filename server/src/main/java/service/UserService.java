@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import exception.ResponseException;
 import model.*;
@@ -15,7 +16,7 @@ public class UserService {
         this.authAccess = authAccess;
     }
 
-    public RegisterResult register(RegisterRequest r) {
+    public RegisterResult register(RegisterRequest r) throws DataAccessException {
         if (r.username() == null || r.password() == null || r.email() == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
         }
@@ -28,7 +29,7 @@ public class UserService {
         return new RegisterResult(r.username(), auth.authToken());
     }
 
-    public LoginResult login(LoginRequest r) {
+    public LoginResult login(LoginRequest r) throws DataAccessException {
         if (r.username() == null || r.password() == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
         }
@@ -40,7 +41,7 @@ public class UserService {
         return new LoginResult(r.username(), auth.authToken());
     }
 
-    public void logout(AuthTokenRequest r) {
+    public void logout(AuthTokenRequest r) throws DataAccessException {
         AuthData auth = authAccess.getAuth(r.authToken());
         if (auth == null) {
             throw new ResponseException(ResponseException.Code.Unauthorized, "Error: unauthorized");

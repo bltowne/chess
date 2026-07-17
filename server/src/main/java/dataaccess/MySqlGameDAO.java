@@ -18,13 +18,19 @@ public class MySqlGameDAO implements GameDAO {
         configureDatabase();
     }
 
-    public int createGame(String gameName) throws ResponseException {}
+    public int createGame(String gameName) throws ResponseException, DataAccessException {
+        var statement = "";
+        executeUpdate(statement);
+    }
 
     public GameData findGame(int gameID) throws ResponseException {}
 
     public boolean checkColor(GameData game, ChessGame.TeamColor color) throws ResponseException {}
 
-    public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws ResponseException {}
+    public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws ResponseException, DataAccessException {
+        var statement = "";
+        executeUpdate(statement);
+    }
 
     public Collection<GameData> listGames() throws ResponseException {}
 

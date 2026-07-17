@@ -54,21 +54,21 @@ public class Server {
         ctx.status(200);
     }
 
-    private void register(Context ctx) throws ResponseException {
+    private void register(Context ctx) throws ResponseException, DataAccessException {
         RegisterRequest request = new Gson().fromJson(ctx.body(), RegisterRequest.class);
         RegisterResult result = userService.register(request);
         ctx.result(new Gson().toJson(result));
         ctx.status(200);
     }
 
-    private void login(Context ctx) throws ResponseException {
+    private void login(Context ctx) throws ResponseException, DataAccessException {
         LoginRequest request = new Gson().fromJson(ctx.body(), LoginRequest.class);
         LoginResult result = userService.login(request);
         ctx.result(new Gson().toJson(result));
         ctx.status(200);
     }
 
-    private void logout(Context ctx) throws ResponseException {
+    private void logout(Context ctx) throws ResponseException, DataAccessException {
         AuthTokenRequest request = new AuthTokenRequest(ctx.header("authorization"));
         userService.logout(request);
         ctx.status(200);
@@ -81,7 +81,7 @@ public class Server {
         ctx.status(200);
     }
 
-    private void createGame(Context ctx) throws ResponseException {
+    private void createGame(Context ctx) throws ResponseException, DataAccessException {
         checkAuth(ctx);
         CreateRequest request = new Gson().fromJson(ctx.body(), CreateRequest.class);
         CreateResult result = gameService.create(request);
@@ -89,7 +89,7 @@ public class Server {
         ctx.status(200);
     }
 
-    private void joinGame(Context ctx) {
+    private void joinGame(Context ctx) throws DataAccessException {
         AuthData auth = checkAuth(ctx);
         JoinRequest request = new Gson().fromJson(ctx.body(), JoinRequest.class);
         gameService.join(request, auth);
