@@ -17,7 +17,7 @@ import static java.sql.Types.NULL;
 
 public class MySqlGameDAO implements GameDAO {
 
-    public MySqlGameDAO() throws DataAccessException {
+    public MySqlGameDAO() {
         configureDatabase();
     }
 
@@ -126,12 +126,14 @@ public class MySqlGameDAO implements GameDAO {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
+    private void configureDatabase() {
+        try {
+            DatabaseManager.createDatabase();
+            try (Connection conn = DatabaseManager.getConnection()) {
+                for (String statement : createStatements) {
+                    try (var preparedStatement = conn.prepareStatement(statement)) {
+                        preparedStatement.executeUpdate();
+                    }
                 }
             }
         } catch (Exception ex) {

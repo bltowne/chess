@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ServiceTest {
 
-    static final UserDAO USER_ACCESS = new MemoryUserDAO();
-    static final GameDAO GAME_ACCESS = new MemoryGameDAO();
-    static final AuthDAO AUTH_ACCESS = new MemoryAuthDAO();
+    static final UserDAO USER_ACCESS = new MySqlUserDAO();
+    static final GameDAO GAME_ACCESS = new MySqlGameDAO();
+    static final AuthDAO AUTH_ACCESS = new MySqlAuthDAO();
     static final UserService USER_SERVICE = new UserService(USER_ACCESS, AUTH_ACCESS);
     static final GameService GAME_SERVICE = new GameService(GAME_ACCESS, AUTH_ACCESS);
     static final ClearService CLEAR_SERVICE = new ClearService(USER_ACCESS, GAME_ACCESS, AUTH_ACCESS);

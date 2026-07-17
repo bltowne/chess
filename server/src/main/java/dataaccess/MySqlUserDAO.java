@@ -13,7 +13,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySqlUserDAO implements UserDAO {
 
-    public MySqlUserDAO() throws DataAccessException {
+    public MySqlUserDAO() {
         configureDatabase();
     }
 
@@ -95,12 +95,14 @@ public class MySqlUserDAO implements UserDAO {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
+    private void configureDatabase() {
+        try {
+            DatabaseManager.createDatabase();
+            try (Connection conn = DatabaseManager.getConnection()) {
+                for (String statement : createStatements) {
+                    try (var preparedStatement = conn.prepareStatement(statement)) {
+                        preparedStatement.executeUpdate();
+                    }
                 }
             }
         } catch (Exception ex) {

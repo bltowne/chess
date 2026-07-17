@@ -16,9 +16,9 @@ public class Server {
     private final ClearService clearService;
 
     public Server() {
-        UserDAO userAccess = new MemoryUserDAO();
-        GameDAO gameAccess = new MemoryGameDAO();
-        AuthDAO authAccess = new MemoryAuthDAO();
+        UserDAO userAccess = new MySqlUserDAO();
+        GameDAO gameAccess = new MySqlGameDAO();
+        AuthDAO authAccess = new MySqlAuthDAO();
 
         this.userService = new UserService(userAccess, authAccess);
         this.gameService = new GameService(gameAccess, authAccess);

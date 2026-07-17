@@ -15,7 +15,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySqlAuthDAO implements AuthDAO {
 
-    public MySqlAuthDAO() throws DataAccessException {
+    public MySqlAuthDAO() {
         configureDatabase();
     }
 
@@ -98,12 +98,14 @@ public class MySqlAuthDAO implements AuthDAO {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
+    private void configureDatabase() {
+        try {
+            DatabaseManager.createDatabase();
+            try (Connection conn = DatabaseManager.getConnection()) {
+                for (String statement : createStatements) {
+                    try (var preparedStatement = conn.prepareStatement(statement)) {
+                        preparedStatement.executeUpdate();
+                    }
                 }
             }
         } catch (Exception ex) {
