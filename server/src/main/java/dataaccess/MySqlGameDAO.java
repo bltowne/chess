@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -20,29 +21,72 @@ public class MySqlGameDAO implements GameDAO {
         configureDatabase();
     }
 
-    public int createGame(String gameName) throws ResponseException, DataAccessException {
+    public int createGame(String gameName) throws ResponseException {
         var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
         String game = new Gson().toJson(new ChessGame());
         return executeUpdate(statement, null, null, gameName, game);
     }
 
-    public GameData findGame(int gameID) throws ResponseException {}
-
-    public boolean checkColor(GameData game, ChessGame.TeamColor color) throws ResponseException {}
-
-    public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws ResponseException, DataAccessException {
-        var statement = "";
-        executeUpdate(statement);
+    public GameData findGame(int gameID) throws ResponseException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGame(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return null;
     }
 
-    public Collection<GameData> listGames() throws ResponseException {}
+    public boolean checkColor(GameData game, ChessGame.TeamColor color) throws ResponseException {
+        GameData gameFromDatabase = findGame(game.gameID());
+        return (color == ChessGame.TeamColor.WHITE && gameFromDatabase.whiteUsername() == null) ||
+                (color == ChessGame.TeamColor.BLACK && gameFromDatabase.blackUsername() == null);
+    }
 
-    public void deleteAllGames() throws ResponseException, DataAccessException {
+    public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws ResponseException {
+        GameData newGame = game.addPlayer(color, username);
+        var statement = "UPDATE games SET whiteUsername=? blackUsername=? WHERE gameID=?";
+        executeUpdate(statement, newGame.whiteUsername(), newGame.blackUsername(), newGame.gameID());
+    }
+
+    public Collection<GameData> listGames() throws ResponseException {
+        var result = new ArrayList<GameData>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while(rs.next()) {
+                        result.add(readGame(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return result;
+    }
+
+    public void deleteAllGames() throws ResponseException {
         var statement = "TRUNCATE games";
         executeUpdate(statement);
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private GameData readGame(ResultSet rs) throws SQLException {
+        return new GameData(rs.getInt("gameID"),
+                            rs.getString("whiteUsername"),
+                            rs.getString("blackUsername"),
+                            rs.getString("gameName"),
+                            new Gson().fromJson(rs.getString("game"), ChessGame.class));
+    }
+
+    private int executeUpdate(String statement, Object... params) {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
@@ -60,7 +104,7 @@ public class MySqlGameDAO implements GameDAO {
 
                 return 0;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new ResponseException(ResponseException.Code.ServerError, String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
@@ -86,7 +130,7 @@ public class MySqlGameDAO implements GameDAO {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
