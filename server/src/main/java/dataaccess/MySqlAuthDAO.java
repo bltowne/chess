@@ -48,7 +48,15 @@ public class MySqlAuthDAO implements AuthDAO {
         }
     }
 
-    private final String[] createStatements = {};
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  auths (
+              `authToken` int NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`authToken`),
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
