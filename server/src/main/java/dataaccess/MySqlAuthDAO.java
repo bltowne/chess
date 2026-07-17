@@ -32,7 +32,7 @@ public class MySqlAuthDAO implements AuthDAO {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
-                    // if statements with different params here
+                    if (param instanceof String p) ps.setString(i + 1, p);
                 }
                 ps.executeUpdate();
 
@@ -51,7 +51,7 @@ public class MySqlAuthDAO implements AuthDAO {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  auths (
-              `authToken` int NOT NULL,
+              `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
               PRIMARY KEY (`authToken`),
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
