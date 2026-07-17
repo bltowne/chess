@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -18,15 +19,17 @@ public class MySqlAuthDAO implements AuthDAO {
     }
 
     public AuthData createAuth(String username) throws ResponseException, DataAccessException {
-        var statement = "";
-        executeUpdate(statement);
+        var statement = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
+        String authToken = UUID.randomUUID().toString();
+        executeUpdate(statement, authToken, username);
+        return new AuthData(authToken, username);
     }
 
     public AuthData getAuth(String authToken) throws ResponseException {}
 
     public void deleteAuth(AuthData authData) throws ResponseException, DataAccessException {
-        var statement = "";
-        executeUpdate(statement);
+        var statement = "DELETE FROM auths WHERE authToken=?";
+        executeUpdate(statement, authData.authToken());
     }
 
     public Collection<AuthData> listAuth() throws ResponseException {}

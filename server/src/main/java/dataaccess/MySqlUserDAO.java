@@ -18,8 +18,8 @@ public class MySqlUserDAO implements UserDAO {
     public UserData getUser(String name) throws ResponseException {}
 
     public void createUser(RegisterRequest r) throws ResponseException, DataAccessException {
-        var statement = "";
-        executeUpdate(statement);
+        var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        executeUpdate(statement, r.username(), r.password(), r.email());
     }
 
     public Collection<UserData> listUsers() throws ResponseException {}

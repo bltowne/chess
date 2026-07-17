@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
 
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
 
 public class MySqlGameDAO implements GameDAO {
 
@@ -19,8 +21,9 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     public int createGame(String gameName) throws ResponseException, DataAccessException {
-        var statement = "";
-        executeUpdate(statement);
+        var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+        String game = new Gson().toJson(new ChessGame());
+        return executeUpdate(statement, null, null, gameName, game);
     }
 
     public GameData findGame(int gameID) throws ResponseException {}
@@ -46,6 +49,7 @@ public class MySqlGameDAO implements GameDAO {
                     Object param = params[i];
                     if (param instanceof Integer p) ps.setInt(i + 1, p);
                     else if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
 
