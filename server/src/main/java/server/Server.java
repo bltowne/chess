@@ -49,7 +49,7 @@ public class Server {
         ctx.result(ex.toJson());
     }
 
-    private void clear(Context ctx) throws ResponseException {
+    private void clear(Context ctx) throws ResponseException, DataAccessException {
         clearService.clear();
         ctx.status(200);
     }

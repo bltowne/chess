@@ -1,8 +1,10 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -21,7 +23,7 @@ public class ClearService {
         this.authAccess = authAccess;
     }
 
-    public void clear() {
+    public void clear() throws ResponseException, DataAccessException {
         deleteAllUsers();
         deleteAllGames();
         deleteAllAuth();
@@ -34,14 +36,14 @@ public class ClearService {
         }
     }
 
-    private void deleteAllGames() {
+    private void deleteAllGames() throws ResponseException, DataAccessException {
         Collection<GameData> games = gameAccess.listGames();
         if (!games.isEmpty()) {
             gameAccess.deleteAllGames();
         }
     }
 
-    private void deleteAllAuth() {
+    private void deleteAllAuth() throws ResponseException, DataAccessException {
         Collection<AuthData> auths = authAccess.listAuth();
         if (!auths.isEmpty()) {
             authAccess.deleteAllAuth();

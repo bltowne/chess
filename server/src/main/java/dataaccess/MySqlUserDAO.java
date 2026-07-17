@@ -21,7 +21,10 @@ public class MySqlUserDAO implements UserDAO {
 
     public Collection<UserData> listUsers() throws ResponseException {}
 
-    public void deleteAllUsers() throws ResponseException {}
+    public void deleteAllUsers() throws ResponseException, DataAccessException {
+        var statement = "TRUNCATE users";
+        executeUpdate(statement);
+    }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {

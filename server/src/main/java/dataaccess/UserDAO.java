@@ -13,5 +13,5 @@ public interface UserDAO {
 
     Collection<UserData> listUsers() throws ResponseException;
 
-    void deleteAllUsers() throws ResponseException;
+    void deleteAllUsers() throws ResponseException, DataAccessException;
 }

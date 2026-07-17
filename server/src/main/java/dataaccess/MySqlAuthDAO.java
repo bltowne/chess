@@ -25,7 +25,10 @@ public class MySqlAuthDAO implements AuthDAO {
 
     public Collection<AuthData> listAuth() throws ResponseException {}
 
-    public void deleteAllAuth() throws ResponseException {}
+    public void deleteAllAuth() throws DataAccessException {
+        var statement = "TRUNCATE auths";
+        executeUpdate(statement);
+    }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {

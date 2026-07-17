@@ -21,7 +21,7 @@ class ServiceTest {
     static final ClearService CLEAR_SERVICE = new ClearService(USER_ACCESS, GAME_ACCESS, AUTH_ACCESS);
 
     @BeforeEach
-    void reset() throws ResponseException {
+    void reset() throws ResponseException, DataAccessException {
         CLEAR_SERVICE.clear();
         USER_SERVICE.register(new RegisterRequest("username", "password", "email"));
     }
@@ -140,7 +140,7 @@ class ServiceTest {
     }
 
     @Test
-    void clear() throws ResponseException {
+    void clear() throws ResponseException, DataAccessException {
         USER_SERVICE.register(new RegisterRequest("user", "word", "gmail"));
         GAME_SERVICE.create(new CreateRequest("game 1"));
         GAME_SERVICE.create(new CreateRequest("game 2"));

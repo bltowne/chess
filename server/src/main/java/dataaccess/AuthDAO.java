@@ -14,5 +14,5 @@ public interface AuthDAO {
 
     Collection<AuthData> listAuth() throws ResponseException;
 
-    void deleteAllAuth() throws ResponseException;
+    void deleteAllAuth() throws ResponseException, DataAccessException;
 }

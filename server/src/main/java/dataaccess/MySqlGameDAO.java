@@ -28,7 +28,10 @@ public class MySqlGameDAO implements GameDAO {
 
     public Collection<GameData> listGames() throws ResponseException {}
 
-    public void deleteAllGames() throws ResponseException {}
+    public void deleteAllGames() throws ResponseException, DataAccessException {
+        var statement = "TRUNCATE games";
+        executeUpdate(statement);
+    }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
