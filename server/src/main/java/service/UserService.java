@@ -20,7 +20,7 @@ public class UserService {
         if (r.username() == null || r.password() == null || r.email() == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
         }
-        UserData user = userAccess.getUser(r.username());
+        UserData user = userAccess.getUser(r.username(), r.password());
         if (user != null) {
             throw new ResponseException(ResponseException.Code.AlreadyTakenException, "Error: already taken");
         }
@@ -33,8 +33,8 @@ public class UserService {
         if (r.username() == null || r.password() == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "Error: bad request");
         }
-        UserData user = userAccess.getUser(r.username());
-        if (user == null || !comparePasswords(user.password(), r.password())) {
+        UserData user = userAccess.getUser(r.username(), r.password());
+        if (user == null) {
             throw new ResponseException(ResponseException.Code.Unauthorized, "Error: unauthorized");
         }
         AuthData auth = authAccess.createAuth(r.username());

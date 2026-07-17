@@ -7,7 +7,7 @@ import model.UserData;
 import java.util.Collection;
 
 public interface UserDAO {
-    UserData getUser(String name) throws ResponseException;
+    UserData getUser(String username, String password) throws ResponseException;
 
     void createUser(RegisterRequest r) throws ResponseException, DataAccessException;
 

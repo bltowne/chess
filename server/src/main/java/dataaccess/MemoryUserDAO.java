@@ -11,9 +11,9 @@ public class MemoryUserDAO implements UserDAO{
 
     final private Collection<UserData> users = new ArrayList<>();
 
-    public UserData getUser(String name) throws ResponseException {
+    public UserData getUser(String username, String password) throws ResponseException {
         for (UserData user : users) {
-            if (user.username().equals(name)) {
+            if (user.username().equals(username) && user.password().equals(password)) {
                 return user;
             }
         }

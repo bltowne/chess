@@ -2,9 +2,11 @@ package dataaccess;
 
 import exception.ResponseException;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -15,18 +17,60 @@ public class MySqlUserDAO implements UserDAO {
         configureDatabase();
     }
 
-    public UserData getUser(String name) throws ResponseException {}
+    public UserData getUser(String username, String password) throws ResponseException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password, email FROM users WHERE username=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && verifyUser(rs, password)) {
+                        return readUser(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return null;
+    }
 
     public void createUser(RegisterRequest r) throws ResponseException, DataAccessException {
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        executeUpdate(statement, r.username(), r.password(), r.email());
+        String hashedPassword = BCrypt.hashpw(r.password(), BCrypt.gensalt());
+        executeUpdate(statement, r.username(), hashedPassword, r.email());
     }
 
-    public Collection<UserData> listUsers() throws ResponseException {}
+    public Collection<UserData> listUsers() throws ResponseException {
+        var result = new ArrayList<UserData>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password, email FROM users";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(readUser(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return result;
+    }
 
     public void deleteAllUsers() throws ResponseException, DataAccessException {
         var statement = "TRUNCATE users";
         executeUpdate(statement);
+    }
+
+    private UserData readUser(ResultSet rs) throws SQLException {
+        var username = rs.getString("username");
+        var password = rs.getString("password");
+        var email = rs.getString("email");
+        return new UserData(username, password, email);
+    }
+
+    private boolean verifyUser(ResultSet rs, String providedClearTextPassword) throws SQLException {
+        return BCrypt.checkpw(providedClearTextPassword, rs.getString("password"));
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
