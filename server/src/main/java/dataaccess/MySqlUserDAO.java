@@ -9,12 +9,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-
 public class MySqlUserDAO implements UserDAO {
 
+    private final DatabaseAccessConfigurator dataAccess;
+
     public MySqlUserDAO() {
-        configureDatabase();
+        dataAccess = new DatabaseAccessConfigurator("user");
     }
 
     public UserData getUser(String username, String password) throws ResponseException {
@@ -37,7 +37,7 @@ public class MySqlUserDAO implements UserDAO {
     public void createUser(RegisterRequest r) throws ResponseException {
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         String hashedPassword = BCrypt.hashpw(r.password(), BCrypt.gensalt());
-        executeUpdate(statement, r.username(), hashedPassword, r.email());
+        dataAccess.executeUpdate(statement, r.username(), hashedPassword, r.email());
     }
 
     public Collection<UserData> listUsers() throws ResponseException {
@@ -59,7 +59,7 @@ public class MySqlUserDAO implements UserDAO {
 
     public void deleteAllUsers() throws ResponseException {
         var statement = "TRUNCATE users";
-        executeUpdate(statement);
+        dataAccess.executeUpdate(statement);
     }
 
     private UserData readUser(ResultSet rs) throws SQLException {
@@ -68,45 +68,5 @@ public class MySqlUserDAO implements UserDAO {
 
     private boolean verifyUser(ResultSet rs, String providedClearTextPassword) throws SQLException {
         return BCrypt.checkpw(providedClearTextPassword, rs.getString("password"));
-    }
-
-    private void executeUpdate(String statement, Object... params) {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                }
-                ps.executeUpdate();
-            }
-        } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
-        }
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  users (
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() {
-        try {
-            DatabaseManager.createDatabase();
-            try (Connection conn = DatabaseManager.getConnection()) {
-                for (String statement : createStatements) {
-                    try (var preparedStatement = conn.prepareStatement(statement)) {
-                        preparedStatement.executeUpdate();
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to configure database: %s", ex.getMessage()));
-        }
     }
 }
