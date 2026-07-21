@@ -38,7 +38,7 @@ public class MySqlAuthDAO implements AuthDAO {
                 }
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to read data: %s", e.getMessage()));
         }
         return null;
     }
@@ -60,7 +60,7 @@ public class MySqlAuthDAO implements AuthDAO {
                 }
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to read data: %s", e.getMessage()));
         }
         return result;
     }
@@ -84,7 +84,7 @@ public class MySqlAuthDAO implements AuthDAO {
                 ps.executeUpdate();
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 
@@ -93,7 +93,7 @@ public class MySqlAuthDAO implements AuthDAO {
             CREATE TABLE IF NOT EXISTS  auths (
               `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
-              PRIMARY KEY (`authToken`),
+              PRIMARY KEY (`authToken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
@@ -109,7 +109,7 @@ public class MySqlAuthDAO implements AuthDAO {
                 }
             }
         } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to configure database: %s", ex.getMessage()));
         }
     }
 }

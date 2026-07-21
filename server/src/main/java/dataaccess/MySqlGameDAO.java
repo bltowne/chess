@@ -39,7 +39,7 @@ public class MySqlGameDAO implements GameDAO {
                 }
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to read data: %s", e.getMessage()));
         }
         return null;
     }
@@ -52,7 +52,7 @@ public class MySqlGameDAO implements GameDAO {
 
     public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws ResponseException {
         GameData newGame = game.addPlayer(color, username);
-        var statement = "UPDATE games SET whiteUsername=? blackUsername=? WHERE gameID=?";
+        var statement = "UPDATE games SET whiteUsername=?, blackUsername=? WHERE gameID=?";
         executeUpdate(statement, newGame.whiteUsername(), newGame.blackUsername(), newGame.gameID());
     }
 
@@ -68,7 +68,7 @@ public class MySqlGameDAO implements GameDAO {
                 }
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to read data: %s", e.getMessage()));
         }
         return result;
     }
@@ -109,7 +109,7 @@ public class MySqlGameDAO implements GameDAO {
                 return 0;
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 
@@ -120,9 +120,9 @@ public class MySqlGameDAO implements GameDAO {
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256) NOT NULL,
-              `game` TEXT DEFAULT NOT NULL,
-              PRIMARY KEY (`gameID`),
-            ) AUTO_INCREMENT-1000 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+              `game` TEXT NOT NULL,
+              PRIMARY KEY (`gameID`)
+            ) AUTO_INCREMENT=1000 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
 
@@ -137,7 +137,7 @@ public class MySqlGameDAO implements GameDAO {
                 }
             }
         } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to configure database: %s", ex.getMessage()));
         }
     }
 }
