@@ -118,25 +118,71 @@ public class DataAccessTest {
     }
 
     @Test
-    void getUserPositive() {}
+    void getUserPositive() {
+        String expected = "username";
+        userAccess.createUser(new RegisterRequest(expected, "password", "email"));
+        UserData actual = userAccess.getUser(expected, "password");
+
+        assertEquals(expected, actual.username());
+    }
 
     @Test
-    void getUserNegative() {}
+    void getUserNegative() {
+        userAccess.createUser(new RegisterRequest("username", "password", "email"));
+        assertNull(userAccess.getUser("username", "wrong"));
+    }
 
     @Test
-    void createUserPositive() {}
+    void createUserPositive() {
+        String expected = "username";
+        userAccess.createUser(new RegisterRequest(expected, "password", "email"));
+        UserData actual = userAccess.getUser(expected, "password");
+        Collection<UserData> users = userAccess.listUsers();
+
+        assertEquals(expected, actual.username());
+        assertEquals(1, users.size());
+    }
 
     @Test
-    void createUserNegative() {}
+    void createUserNegative() {
+        assertThrows(ResponseException.class, () -> userAccess.createUser(new RegisterRequest(null, null, null)));
+    }
 
     @Test
-    void listUsersPositive() {}
+    void listUsersPositive() {
+        String expected = "username";
+        userAccess.createUser(new RegisterRequest(expected, "password", "email"));
+        Collection<UserData> users = userAccess.listUsers();
+
+        assertEquals(1, users.size());
+    }
 
     @Test
-    void listUsersNegative() {}
+    void listUsersNegative() {
+        String statement = "DROP TABLE users";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new ResponseException(ResponseException.Code.ServerError,
+                    String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
+        }
+        assertThrows(ResponseException.class, userAccess::listUsers);
+        userAccess = new MySqlUserDAO();
+    }
 
     @Test
-    void deleteAllUsers() {}
+    void deleteAllUsers() {
+        userAccess.createUser(new RegisterRequest("username", "password", "email"));
+        userAccess.createUser(new RegisterRequest("usertwo", "passtwo", "gmail"));
+        Collection<UserData> users = userAccess.listUsers();
+        assertEquals(2, users.size());
+
+        userAccess.deleteAllUsers();
+        Collection<UserData> deletedUsers = userAccess.listUsers();
+        assertEquals(0, deletedUsers.size());
+    }
 
     @Test
     void createGamePositive() {}
