@@ -30,7 +30,8 @@ public class DatabaseAccessConfigurator {
                 }
             }
         } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to configure database: %s", ex.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError,
+                    String.format("Error: unable to configure database: %s", ex.getMessage()));
         }
     }
 
@@ -39,12 +40,13 @@ public class DatabaseAccessConfigurator {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
+                    if (param instanceof String p) {ps.setString(i + 1, p);}
                 }
                 ps.executeUpdate();
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
+            throw new ResponseException(ResponseException.Code.ServerError,
+                    String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 
