@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -185,35 +186,117 @@ public class DataAccessTest {
     }
 
     @Test
-    void createGamePositive() {}
+    void createGamePositive() {
+        String expected = "game";
+        int created = gameAccess.createGame(expected);
+        GameData actual = gameAccess.findGame(created);
+        Collection<GameData> games = gameAccess.listGames();
+
+        assertEquals(expected, actual.gameName());
+        assertEquals(1, games.size());
+    }
 
     @Test
-    void createGameNegative() {}
+    void createGameNegative() {
+        assertThrows(ResponseException.class, () -> gameAccess.createGame(null));
+    }
 
     @Test
-    void findGamePositive() {}
+    void findGamePositive() {
+        String expected = "game";
+        int created = gameAccess.createGame(expected);
+        GameData actual = gameAccess.findGame(created);
+
+        assertEquals(expected, actual.gameName());
+    }
 
     @Test
-    void findGameNegative() {}
+    void findGameNegative() {
+        assertNull(gameAccess.findGame(0));
+    }
 
     @Test
-    void checkColorPositive() {}
+    void checkColorPositive() {
+        String expected = "game";
+        int created = gameAccess.createGame(expected);
+        GameData game = gameAccess.findGame(created);
+
+        assertTrue(gameAccess.checkColor(game, ChessGame.TeamColor.WHITE));
+    }
 
     @Test
-    void checkColorNegative() {}
+    void checkColorNegative() {
+        String expected = "game";
+        int created = gameAccess.createGame(expected);
+        GameData game = gameAccess.findGame(created);
+        gameAccess.joinGame(game, ChessGame.TeamColor.WHITE, "username");
+
+        assertFalse(gameAccess.checkColor(game, ChessGame.TeamColor.WHITE));
+    }
 
     @Test
-    void joinGamePositive() {}
+    void joinGamePositive() {
+        String expected = "game";
+        int created = gameAccess.createGame(expected);
+        GameData game = gameAccess.findGame(created);
+        gameAccess.joinGame(game, ChessGame.TeamColor.WHITE, "username");
+        GameData updatedGame = gameAccess.findGame(game.gameID());
+
+        assertEquals("username", updatedGame.whiteUsername());
+    }
 
     @Test
-    void joinGameNegative() {}
+    void joinGameNegative() {
+        String statement = "DROP TABLE games";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new ResponseException(ResponseException.Code.ServerError,
+                    String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
+        }
+        assertThrows(ResponseException.class, () -> gameAccess.joinGame(
+                new GameData(1000, null, null, "name", new ChessGame()),
+                null,
+                null
+        ));
+        gameAccess = new MySqlGameDAO();
+    }
 
     @Test
-    void listGamesPositive() {}
+    void listGamesPositive() {
+        String expected = "game";
+        gameAccess.createGame(expected);
+        Collection<GameData> games = gameAccess.listGames();
+
+        assertEquals(1, games.size());
+    }
 
     @Test
-    void listGamesNegative() {}
+    void listGamesNegative() {
+        String statement = "DROP TABLE games";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new ResponseException(ResponseException.Code.ServerError,
+                    String.format("Error: unable to update database: %s, %s", statement, e.getMessage()));
+        }
+        assertThrows(ResponseException.class, gameAccess::listGames);
+        gameAccess = new MySqlGameDAO();
+    }
 
     @Test
-    void deleteAllGames() {}
+    void deleteAllGames() {
+        gameAccess.createGame("game one");
+        gameAccess.createGame("game two");
+        Collection<GameData> games = gameAccess.listGames();
+        assertEquals(2, games.size());
+
+        gameAccess.deleteAllGames();
+        Collection<GameData> deletedGames = gameAccess.listGames();
+        assertEquals(0, deletedGames.size());
+    }
 }
