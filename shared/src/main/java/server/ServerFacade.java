@@ -18,31 +18,45 @@ public class ServerFacade {
     }
 
     public RegisterResult register(RegisterRequest r) throws ResponseException {
-
+        var request = buildRequest("POST", "/user", r);
+        var response = sendRequest(request);
+        return handleResponse(response, RegisterResult.class);
     }
 
     public LoginResult login(LoginRequest r) throws ResponseException {
-
+        var request = buildRequest("POST", "/session", r);
+        var response = sendRequest(request);
+        return handleResponse(response, LoginResult.class);
     }
 
     public void logout(AuthTokenRequest r) throws ResponseException {
-
+        var request = buildRequest("DELETE", "/session", r);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     public CreateResult create(CreateRequest r) throws ResponseException {
-
+        var request = buildRequest("POST", "/game", r);
+        var response = sendRequest(request);
+        return handleResponse(response, CreateResult.class);
     }
 
     public void join(JoinRequest r, AuthData auth) throws ResponseException {
-
+        var request = buildRequest("PUT", "/game", r);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     public ListResult list(AuthTokenRequest r) throws ResponseException {
-
+        var request = buildRequest("GET", "/game", r);
+        var response = sendRequest(request);
+        return handleResponse(response, ListResult.class);
     }
 
     public void clear() throws ResponseException {
-
+        var request = buildRequest("DELETE", "/db", null);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body) {
