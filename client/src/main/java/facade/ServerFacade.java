@@ -18,51 +18,54 @@ public class ServerFacade {
     }
 
     public RegisterResult register(RegisterRequest r) throws ResponseException {
-        var request = buildRequest("POST", "/user", r);
+        var request = buildRequest("POST", "/user", r, null);
         var response = sendRequest(request);
         return handleResponse(response, RegisterResult.class);
     }
 
     public LoginResult login(LoginRequest r) throws ResponseException {
-        var request = buildRequest("POST", "/session", r);
+        var request = buildRequest("POST", "/session", r, null);
         var response = sendRequest(request);
         return handleResponse(response, LoginResult.class);
     }
 
     public void logout(String auth) throws ResponseException {
-        var request = buildRequest("DELETE", "/session", auth);
+        var request = buildRequest("DELETE", "/session", null, auth);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
     public CreateResult create(CreateRequest r, String auth) throws ResponseException {
-        var request = buildRequest("POST", "/game", r);
+        var request = buildRequest("POST", "/game", r, auth);
         var response = sendRequest(request);
         return handleResponse(response, CreateResult.class);
     }
 
     public void join(JoinRequest r, String auth) throws ResponseException {
-        var request = buildRequest("PUT", "/game", r);
+        var request = buildRequest("PUT", "/game", r, auth);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
     public ListResult list(String auth) throws ResponseException {
-        var request = buildRequest("GET", "/game", auth);
+        var request = buildRequest("GET", "/game", null, auth);
         var response = sendRequest(request);
         return handleResponse(response, ListResult.class);
     }
 
     public void clear() throws ResponseException {
-        var request = buildRequest("DELETE", "/db", null);
+        var request = buildRequest("DELETE", "/db", null, null);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    private HttpRequest buildRequest(String method, String path, Object body, String header) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
+        if (header != null) {
+            request.header("authorization", header);
+        }
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
