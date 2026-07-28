@@ -24,7 +24,7 @@ public class ServerFacadeTests {
     }
 
     @BeforeEach
-    void clear() {
+    void reset() {
         facade.clear();
     }
 
@@ -70,8 +70,5 @@ public class ServerFacadeTests {
     public void listNegative() throws ResponseException {}
 
     @Test
-    public void clearPositive() throws ResponseException {}
-
-    @Test
-    public void clearNegative() throws ResponseException {}
+    public void clear() throws ResponseException {}
 }

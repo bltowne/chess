@@ -50,7 +50,7 @@ public class Repl {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             if (cmd.equals("quit")) return "quit";
-            else if (isGameplay) return gameplay.gameboard();
+            else if (isGameplay) return "Gameplay functions";
             else if (isLoggedIn) return evalLoggedIn(cmd, params);
             else return evalLoggedOut(cmd, params);
         } catch (ResponseException ex) {
@@ -90,14 +90,16 @@ public class Repl {
                 return loggedIn.list();
             }
             case "join" -> {
-                String result = loggedIn.join(params);
+                System.out.println(loggedIn.join(params));
                 isGameplay = true;
-                return result;
+                gameplay.gameboard(params);
+                return "";
             }
             case "observe" -> {
-                String result = loggedIn.observe(params);
+                System.out.println(loggedIn.observe(params));
                 isGameplay = true;
-                return result;
+                gameplay.gameboard(params);
+                return "";
             }
             default -> {
                 return loggedIn.help();
