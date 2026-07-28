@@ -1,4 +1,4 @@
-package server;
+package facade;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
@@ -29,26 +29,26 @@ public class ServerFacade {
         return handleResponse(response, LoginResult.class);
     }
 
-    public void logout(AuthTokenRequest r) throws ResponseException {
-        var request = buildRequest("DELETE", "/session", r);
+    public void logout(String auth) throws ResponseException {
+        var request = buildRequest("DELETE", "/session", auth);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
-    public CreateResult create(CreateRequest r) throws ResponseException {
+    public CreateResult create(CreateRequest r, String auth) throws ResponseException {
         var request = buildRequest("POST", "/game", r);
         var response = sendRequest(request);
         return handleResponse(response, CreateResult.class);
     }
 
-    public void join(JoinRequest r, AuthData auth) throws ResponseException {
+    public void join(JoinRequest r, String auth) throws ResponseException {
         var request = buildRequest("PUT", "/game", r);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
-    public ListResult list(AuthTokenRequest r) throws ResponseException {
-        var request = buildRequest("GET", "/game", r);
+    public ListResult list(String auth) throws ResponseException {
+        var request = buildRequest("GET", "/game", auth);
         var response = sendRequest(request);
         return handleResponse(response, ListResult.class);
     }

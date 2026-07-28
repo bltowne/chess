@@ -1,7 +1,7 @@
 package client;
 
 import exception.ResponseException;
-import server.ServerFacade;
+import facade.ServerFacade;
 
 public class LoggedOutClient {
 

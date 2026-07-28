@@ -1,7 +1,7 @@
 package client;
 
 import chess.ChessGame;
-import server.ServerFacade;
+import facade.ServerFacade;
 
 public class GameplayClient {
 

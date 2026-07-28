@@ -2,7 +2,7 @@ package client;
 
 import chess.ChessGame;
 import exception.ResponseException;
-import server.ServerFacade;
+import facade.ServerFacade;
 
 public class LoggedInClient {
 
