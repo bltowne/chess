@@ -1,6 +1,7 @@
 package client;
 
 import chess.ChessGame;
+import exception.ResponseException;
 import server.ServerFacade;
 
 public class LoggedInClient {
@@ -23,32 +24,41 @@ public class LoggedInClient {
                """;
     }
 
-    public String logout() {
+    public String logout() throws ResponseException {
         return "Logout function";
     }
 
-    public String create(String[] params) {
-        String gameName = params[0];
-        return "Create function";
+    public String create(String[] params) throws ResponseException {
+        if (params.length >= 1) {
+            String gameName = params[0];
+            return "Create function";
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <name>");
     }
 
-    public String list() {
+    public String list() throws ResponseException{
         return "List function";
     }
 
-    public String join(String[] params) {
-        int gameID = Integer.parseInt(params[0]);
-        ChessGame.TeamColor color;
-        if (params[1].equals("white")) {
-            color = ChessGame.TeamColor.WHITE;
-        } else if (params[1].equals("black")) {
-            color = ChessGame.TeamColor.BLACK;
+    public String join(String[] params) throws ResponseException {
+        if (params.length >= 2) {
+            int gameID = Integer.parseInt(params[0]);
+            ChessGame.TeamColor color;
+            if (params[1].equals("white")) {
+                color = ChessGame.TeamColor.WHITE;
+            } else if (params[1].equals("black")) {
+                color = ChessGame.TeamColor.BLACK;
+            }
+            return "Join function";
         }
-        return "Join function";
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <id> [white|black]");
     }
 
-    public String observe(String[] params) {
-        int gameID = Integer.parseInt(params[0]);
-        return "Observe function";
+    public String observe(String[] params) throws ResponseException {
+        if (params.length >= 1) {
+            int gameID = Integer.parseInt(params[0]);
+            return "Observe function";
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <id>");
     }
 }
