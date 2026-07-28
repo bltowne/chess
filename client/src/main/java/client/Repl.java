@@ -35,10 +35,10 @@ public class Repl {
 
             try {
                 result = eval(line);
-                System.out.print(result);
+                System.out.print(result + "\n");
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(msg);
+                System.out.print(msg + "\n");
             }
         }
         System.out.println();
@@ -90,13 +90,13 @@ public class Repl {
                 return loggedIn.list();
             }
             case "join" -> {
-                System.out.println(loggedIn.join(params));
+                System.out.println(loggedIn.join(params) + "\n");
                 isGameplay = true;
                 gameplay.gameboard(params);
                 return "";
             }
             case "observe" -> {
-                System.out.println(loggedIn.observe(params));
+                System.out.println(loggedIn.observe(params) + "\n");
                 isGameplay = true;
                 gameplay.gameboard(params);
                 return "";
