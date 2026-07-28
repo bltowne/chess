@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import server.ServerFacade;
 
 public class LoggedInClient {
@@ -26,7 +27,8 @@ public class LoggedInClient {
         return "Logout function";
     }
 
-    public String create() {
+    public String create(String[] params) {
+        String gameName = params[0];
         return "Create function";
     }
 
@@ -34,11 +36,19 @@ public class LoggedInClient {
         return "List function";
     }
 
-    public String join() {
+    public String join(String[] params) {
+        int gameID = Integer.parseInt(params[0]);
+        ChessGame.TeamColor color;
+        if (params[1].equals("white")) {
+            color = ChessGame.TeamColor.WHITE;
+        } else if (params[1].equals("black")) {
+            color = ChessGame.TeamColor.BLACK;
+        }
         return "Join function";
     }
 
-    public String observe() {
+    public String observe(String[] params) {
+        int gameID = Integer.parseInt(params[0]);
         return "Observe function";
     }
 }

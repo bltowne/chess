@@ -61,12 +61,14 @@ public class Repl {
     private String evalLoggedOut(String cmd, String[] params) {
         switch (cmd) {
             case "register" -> {
+                String result = loggedOut.register(params);
                 isLoggedIn = true;
-                return loggedOut.register();
+                return result;
             }
             case "login" -> {
+                String result = loggedOut.login(params);
                 isLoggedIn = true;
-                return loggedOut.login();
+                return result;
             }
             default -> {
                 return loggedOut.help();
@@ -77,22 +79,25 @@ public class Repl {
     private String evalLoggedIn(String cmd, String[] params) {
         switch (cmd) {
             case "logout" -> {
+                String result = loggedIn.logout();
                 isLoggedIn = false;
-                return loggedIn.logout();
+                return result;
             }
             case "create" -> {
-                return loggedIn.create();
+                return loggedIn.create(params);
             }
             case "list" -> {
                 return loggedIn.list();
             }
             case "join" -> {
+                String result = loggedIn.join(params);
                 isGameplay = true;
-                return loggedIn.join();
+                return result;
             }
             case "observe" -> {
+                String result = loggedIn.observe(params);
                 isGameplay = true;
-                return loggedIn.observe();
+                return result;
             }
             default -> {
                 return loggedIn.help();

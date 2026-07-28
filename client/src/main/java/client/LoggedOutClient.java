@@ -19,11 +19,21 @@ public class LoggedOutClient {
                """;
     }
 
-    public String login() {
-        return "Login function";
+    public String login(String[] params) {
+        String username = params[0];
+        String password = params[1];
+        return "LOGIN" + "\n" +
+                "username: " + username + "\n" +
+                "password: " + password;
     }
 
-    public String register() {
-        return "Register function";
+    public String register(String[] params) {
+        String username = params[0];
+        String password = params[1];
+        String email = params[2];
+        return "REGISTER" + "\n" +
+                "username: " + username + "\n" +
+                "password: " + password + "\n" +
+                "email: " + email;
     }
 }
