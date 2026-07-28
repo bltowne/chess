@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 public class Repl {
 
-    private final ServerFacade server;
     private final LoggedOutClient loggedOut;
     private final LoggedInClient loggedIn;
     private final GameplayClient gameplay;
@@ -18,15 +17,16 @@ public class Repl {
     private boolean isGameplay;
 
     public Repl(String serverUrl) throws ResponseException {
-        server = new ServerFacade(serverUrl);
+        ServerFacade server = new ServerFacade(serverUrl);
         isLoggedIn = false;
         isGameplay = false;
-        loggedOut = new LoggedOutClient();
-        loggedIn = new LoggedInClient();
-        gameplay = new GameplayClient();
+        loggedOut = new LoggedOutClient(server);
+        loggedIn = new LoggedInClient(server);
+        gameplay = new GameplayClient(server);
     }
 
     public void run() {
+        System.out.println("♕ Welcome to 240 Chess! ♕");
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
@@ -49,19 +49,16 @@ public class Repl {
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            if (isGameplay) return gameplay.gameboard();
-            else if (isLoggedIn) {
-                return evalLoggedIn(cmd);
-            }
-            else {
-                return evalLoggedOut(cmd);
-            }
+            if (cmd.equals("quit")) return "quit";
+            else if (isGameplay) return gameplay.gameboard();
+            else if (isLoggedIn) return evalLoggedIn(cmd, params);
+            else return evalLoggedOut(cmd, params);
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
     }
 
-    private String evalLoggedOut(String cmd) {
+    private String evalLoggedOut(String cmd, String[] params) {
         switch (cmd) {
             case "register" -> {
                 isLoggedIn = true;
@@ -71,16 +68,13 @@ public class Repl {
                 isLoggedIn = true;
                 return loggedOut.login();
             }
-            case "quit" -> {
-                return "quit";
-            }
             default -> {
                 return loggedOut.help();
             }
         }
     }
 
-    private String evalLoggedIn(String cmd) {
+    private String evalLoggedIn(String cmd, String[] params) {
         switch (cmd) {
             case "logout" -> {
                 isLoggedIn = false;
@@ -92,9 +86,9 @@ public class Repl {
             case "list" -> {
                 return loggedIn.list();
             }
-            case "play" -> {
+            case "join" -> {
                 isGameplay = true;
-                return loggedIn.play();
+                return loggedIn.join();
             }
             case "observe" -> {
                 isGameplay = true;
