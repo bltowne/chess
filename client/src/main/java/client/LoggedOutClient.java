@@ -2,6 +2,7 @@ package client;
 
 import exception.ResponseException;
 import facade.ServerFacade;
+import model.*;
 
 public class LoggedOutClient {
 
@@ -20,26 +21,18 @@ public class LoggedOutClient {
                """;
     }
 
-    public String login(String[] params) throws ResponseException {
+    public LoginResult login(String[] params) throws ResponseException {
         if (params.length >= 2) {
-            String username = params[0];
-            String password = params[1];
-            return "LOGIN" + "\n" +
-                    "username: " + username + "\n" +
-                    "password: " + password;
+            LoginRequest request = new LoginRequest(params[0], params[1]);
+            return server.login(request);
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <username> <password");
     }
 
-    public String register(String[] params) throws ResponseException {
+    public RegisterResult register(String[] params) throws ResponseException {
         if (params.length >= 3) {
-            String username = params[0];
-            String password = params[1];
-            String email = params[2];
-            return "REGISTER" + "\n" +
-                    "username: " + username + "\n" +
-                    "password: " + password + "\n" +
-                    "email: " + email;
+            RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
+            return server.register(request);
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <username> <password> <email>");
     }
