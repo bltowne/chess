@@ -19,9 +19,7 @@ public class ServerFacade {
 
     public RegisterResult register(RegisterRequest r) throws ResponseException {
         var request = buildRequest("POST", "/user", r, null);
-        System.out.println("Request built");
         var response = sendRequest(request);
-        System.out.println("Response received");
         return handleResponse(response, RegisterResult.class);
     }
 

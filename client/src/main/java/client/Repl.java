@@ -80,18 +80,18 @@ public class Repl {
     private String evalLoggedIn(String cmd, String[] params) {
         switch (cmd) {
             case "logout" -> {
-                String result = loggedIn.logout();
+                String result = loggedIn.logout(isLoggedIn);
                 isLoggedIn = null;
                 return result;
             }
             case "create" -> {
-                return loggedIn.create(params);
+                return loggedIn.create(params, isLoggedIn);
             }
             case "list" -> {
-                return loggedIn.list();
+                return loggedIn.list(isLoggedIn);
             }
             case "join" -> {
-                System.out.println(loggedIn.join(params) + "\n");
+                System.out.println(loggedIn.join(params, isLoggedIn) + "\n");
                 isGameplay = true;
                 gameplay.gameboard(params);
                 return "";
