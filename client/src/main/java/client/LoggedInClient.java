@@ -5,15 +5,17 @@ import exception.ResponseException;
 import facade.ServerFacade;
 import model.*;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoggedInClient {
 
     private final ServerFacade server;
-    private Collection<GameData> games;
+    private List<GameData> games;
 
     public LoggedInClient(ServerFacade server) {
         this.server = server;
+        games = new ArrayList<>();
     }
 
     public String help() {
@@ -36,15 +38,15 @@ public class LoggedInClient {
     public String create(String[] params, String authToken) throws ResponseException {
         if (params.length >= 1) {
             CreateRequest request = new CreateRequest(params[0]);
-            CreateResult result = server.create(request, authToken);
-            return String.format("Successfully created game with ID %s", result.gameID());
+            server.create(request, authToken);
+            return "Successfully created game";
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <name>");
     }
 
     public String list(String authToken) throws ResponseException {
-        games = server.list(authToken).games();
-        StringBuilder result = new StringBuilder("Order - Game Name - Game ID - White Player - Black Player\n");
+        games = new ArrayList<>(server.list(authToken).games());
+        StringBuilder result = new StringBuilder("Game ID - Game Name - White Player - Black Player\n");
         int i = 1;
         String dash = " - ";
         for (GameData game : games) {
@@ -68,12 +70,12 @@ public class LoggedInClient {
         } else {
             blackPlayer = game.blackUsername();
         }
-        return i + dash + game.gameName() + dash + game.gameID() + dash + whitePlayer + dash + blackPlayer + "\n";
+        return i + dash + game.gameName() + dash + whitePlayer + dash + blackPlayer + "\n";
     }
 
     public String join(String[] params, String authToken) throws ResponseException {
         if (params.length >= 2) {
-            int gameID = Integer.parseInt(params[0]);
+            int externalGameID = getExternalGameID(params);
             ChessGame.TeamColor color;
             if (params[1].equals("white")) {
                 color = ChessGame.TeamColor.WHITE;
@@ -82,25 +84,31 @@ public class LoggedInClient {
             } else {
                 throw new ResponseException(ResponseException.Code.ClientError, "Error: color must be white or black");
             }
-            for (GameData game : games) {
-                if (game.gameID() == gameID) {
-                    JoinRequest request = new JoinRequest(color, gameID);
-                    server.join(request, authToken);
-                    return String.format("Successfully joined game %d", gameID);
-                }
+            if (externalGameID <= games.size() && externalGameID > 0) {
+                JoinRequest request = new JoinRequest(color, games.get(externalGameID - 1).gameID());
+                server.join(request, authToken);
+                return String.format("Successfully joined game %d", externalGameID);
             }
             throw new ResponseException(ResponseException.Code.ClientError, "Error: provided game ID doesn't exist");
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <id> [white|black]");
     }
 
+    private static int getExternalGameID(String[] params) throws ResponseException {
+        int externalGameID;
+        try {
+            externalGameID = Integer.parseInt(params[0]);
+        } catch (Exception ex) {
+            throw new ResponseException(ResponseException.Code.ServerError, "Error: please enter valid game ID");
+        }
+        return externalGameID;
+    }
+
     public String observe(String[] params) throws ResponseException {
         if (params.length >= 1) {
-            int gameID = Integer.parseInt(params[0]);
-            for (GameData game : games) {
-                if (game.gameID() == gameID) {
-                    return String.format("Successfully observing game %d", gameID);
-                }
+            int externalGameID = getExternalGameID(params);
+            if (externalGameID <= games.size() && externalGameID > 0) {
+                return String.format("Successfully observing game %d", externalGameID);
             }
             throw new ResponseException(ResponseException.Code.ClientError, "Error: provided game ID doesn't exist");
         }
