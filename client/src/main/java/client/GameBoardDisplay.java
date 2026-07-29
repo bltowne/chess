@@ -97,7 +97,10 @@ public class GameBoardDisplay {
     }
 
     private String pieceRepresentation(ChessPiece piece) {
-        if (piece == null) return "   ";
+        if (piece == null) {
+            return "   ";
+        }
+
         ChessPiece.PieceType pieceType = piece.getPieceType();
         if (pieceType.equals(ChessPiece.PieceType.KING)) {
             return " K ";

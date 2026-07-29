@@ -7,8 +7,6 @@ import model.*;
 import java.util.Arrays;
 import java.util.Scanner;
 
-//import static ui.EscapeSequences.*;
-
 public class Repl {
 
     private final LoggedOutClient loggedOut;
@@ -50,10 +48,18 @@ public class Repl {
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            if (cmd.equals("quit")) return "quit";
-            else if (isGameplay) return "Gameplay functions";
-            else if (isLoggedIn != null) return evalLoggedIn(cmd, params);
-            else return evalLoggedOut(cmd, params);
+            if (cmd.equals("quit")) {
+                return "quit";
+            }
+            else if (isGameplay) {
+                return "Gameplay functions";
+            }
+            else if (isLoggedIn != null) {
+                return evalLoggedIn(cmd, params);
+            }
+            else {
+                return evalLoggedOut(cmd, params);
+            }
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
