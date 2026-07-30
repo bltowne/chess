@@ -60,7 +60,7 @@ public class Repl {
             else {
                 return evalLoggedOut(cmd, params);
             }
-        } catch (ResponseException ex) {
+        } catch (Exception ex) {
             return ex.getMessage();
         }
     }
