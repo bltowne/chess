@@ -1,4 +1,4 @@
-package client;
+package client.subclients;
 
 import chess.ChessGame;
 import exception.ResponseException;

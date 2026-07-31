@@ -1,14 +1,19 @@
 package client;
 
 import chess.ChessGame;
+import client.subclients.GameplayClient;
+import client.subclients.LoggedInClient;
+import client.subclients.LoggedOutClient;
+import client.websocket.NotificationHandler;
 import exception.ResponseException;
 import facade.ServerFacade;
 import model.*;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class Repl {
+public class Repl implements NotificationHandler {
 
     private final LoggedOutClient loggedOut;
     private final LoggedInClient loggedIn;
@@ -42,6 +47,11 @@ public class Repl {
             }
         }
         System.out.println();
+    }
+
+    public void notify(ServerMessage notification) {
+//        System.out.println(notification.message());
+        printPrompt();
     }
 
     private String eval(String input) {

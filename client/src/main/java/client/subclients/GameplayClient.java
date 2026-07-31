@@ -1,6 +1,7 @@
-package client;
+package client.subclients;
 
 import chess.ChessGame;
+import client.GameBoardDisplay;
 import facade.ServerFacade;
 
 public class GameplayClient {

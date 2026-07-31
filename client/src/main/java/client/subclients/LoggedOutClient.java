@@ -1,4 +1,4 @@
-package client;
+package client.subclients;
 
 import exception.ResponseException;
 import facade.ServerFacade;
