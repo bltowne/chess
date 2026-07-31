@@ -25,7 +25,8 @@ public class GameplayClient {
     }
 
     public String redraw() {
-        return "Redraw function";
+        display.showBoard(new ChessGame(), null);
+        return "";
     }
 
     public String leave() {
@@ -44,13 +45,13 @@ public class GameplayClient {
         return "Highlight function";
     }
 
-    public void gameboard(String[] params) {
+    public void gameboard(String[] params, ChessGame game) {
         if (params.length < 2) {
-            display.showBoard(new ChessGame(), null);
+            display.showBoard(game, null);
         } else if (params[1].equals("white")) {
-            display.showBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
+            display.showBoard(game, ChessGame.TeamColor.WHITE);
         } else if (params[1].equals("black")) {
-            display.showBoard(new ChessGame(), ChessGame.TeamColor.BLACK);
+            display.showBoard(game, ChessGame.TeamColor.BLACK);
         }
     }
 }

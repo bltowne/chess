@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import facade.ServerFacade;
 import model.*;
@@ -13,12 +14,12 @@ public class Repl {
     private final LoggedInClient loggedIn;
     private final GameplayClient gameplay;
     private String isLoggedIn;
-    private boolean isGameplay;
+    private ChessGame isGameplay;
 
     public Repl(String serverUrl) throws ResponseException {
         ServerFacade server = new ServerFacade(serverUrl);
         isLoggedIn = null;
-        isGameplay = false;
+        isGameplay = null;
         loggedOut = new LoggedOutClient(server);
         loggedIn = new LoggedInClient(server);
         gameplay = new GameplayClient(server);
@@ -51,7 +52,7 @@ public class Repl {
             if (cmd.equals("quit")) {
                 return "quit";
             }
-            else if (isGameplay) {
+            else if (isGameplay != null) {
                 return evalGameplay(cmd, params);
             }
             else if (isLoggedIn != null) {
@@ -97,15 +98,16 @@ public class Repl {
                 return loggedIn.list(isLoggedIn);
             }
             case "join" -> {
-                System.out.println(loggedIn.join(params, isLoggedIn) + "\n");
-                isGameplay = true;
-                gameplay.gameboard(params);
+                ChessGame game = loggedIn.join(params, isLoggedIn);
+                System.out.println("Successfully joined game");
+                isGameplay = game;
+                gameplay.gameboard(params, game);
                 return "";
             }
             case "observe" -> {
-                System.out.println(loggedIn.observe(params) + "\n");
-                isGameplay = true;
-                gameplay.gameboard(params);
+                ChessGame game = loggedIn.observe(params);
+                System.out.println("Successfully observing game");
+                gameplay.gameboard(params, game);
                 return "";
             }
             default -> {
@@ -121,7 +123,7 @@ public class Repl {
             }
             case "leave" -> {
                 String response = gameplay.leave();
-                isGameplay = false;
+                isGameplay = null;
                 return response;
             }
             case "move" -> {
@@ -144,7 +146,7 @@ public class Repl {
     }
 
     private String clientState() {
-        if (isGameplay) {
+        if (isGameplay != null) {
             return "[GAMEPLAY]";
         } else if (isLoggedIn != null) {
             return "[LOGGED_IN]";
