@@ -13,6 +13,37 @@ public class GameplayClient {
         display = new GameBoardDisplay();
     }
 
+    public String help() {
+        return """
+                  redraw - the board
+                  leave - the game
+                  move <move> - make a move
+                  resign - the game
+                  highlight <move> - highlights legal moves
+                  help - with possible commands
+               """;
+    }
+
+    public String redraw() {
+        return "Redraw function";
+    }
+
+    public String leave() {
+        return "Leave function";
+    }
+
+    public String move(String[] params) {
+        return "Move function";
+    }
+
+    public String resign() {
+        return "Resign function";
+    }
+
+    public String highlight(String[] params) {
+        return "Highlight function";
+    }
+
     public void gameboard(String[] params) {
         if (params.length < 2) {
             display.showBoard(new ChessGame(), null);

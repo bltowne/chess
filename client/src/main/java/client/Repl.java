@@ -52,7 +52,7 @@ public class Repl {
                 return "quit";
             }
             else if (isGameplay) {
-                return "Gameplay functions";
+                return evalGameplay(cmd, params);
             }
             else if (isLoggedIn != null) {
                 return evalLoggedIn(cmd, params);
@@ -110,6 +110,31 @@ public class Repl {
             }
             default -> {
                 return loggedIn.help();
+            }
+        }
+    }
+
+    private String evalGameplay(String cmd, String[] params) {
+        switch (cmd) {
+            case "redraw" -> {
+                return gameplay.redraw();
+            }
+            case "leave" -> {
+                String response = gameplay.leave();
+                isGameplay = false;
+                return response;
+            }
+            case "move" -> {
+                return gameplay.move(params);
+            }
+            case "resign" -> {
+                return gameplay.resign();
+            }
+            case "highlight" -> {
+                return gameplay.highlight(params);
+            }
+            default -> {
+                return gameplay.help();
             }
         }
     }
