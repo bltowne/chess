@@ -6,6 +6,7 @@ import exception.ResponseException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.*;
+import server.websocket.WebSocketHandler;
 import service.*;
 
 public class Server {
@@ -14,6 +15,7 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
         UserDAO userAccess = new MySqlUserDAO();
@@ -24,6 +26,8 @@ public class Server {
         this.gameService = new GameService(gameAccess, authAccess);
         this.clearService = new ClearService(userAccess, gameAccess, authAccess);
 
+        webSocketHandler = new WebSocketHandler();
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", this::clear)
                 .post("/user", this::register)
@@ -32,7 +36,12 @@ public class Server {
                 .get("/game", this::listGames)
                 .post("/game", this::createGame)
                 .put("/game", this::joinGame)
-                .exception(ResponseException.class, this::exceptionHandler);
+                .exception(ResponseException.class, this::exceptionHandler)
+                .ws("/ws", ws -> {
+                    ws.onConnect(webSocketHandler);
+                    ws.onMessage(webSocketHandler);
+                    ws.onClose(webSocketHandler);
+                });
     }
 
     public int run(int desiredPort) {

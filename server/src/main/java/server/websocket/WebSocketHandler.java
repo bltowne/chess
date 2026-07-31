@@ -38,4 +38,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
         }
     }
+
+    @Override
+    public void handleClose(WsCloseContext ctx) {
+        System.out.println("Websocket closed");
+    }
+
+    private String getUsername(String authToken) {}
+
+    private void saveSession(int gameID, Session session) {}
+
+    private void connect(Session session, String username, UserGameCommand command) {}
+
+    private void makeMove(Session session, String username, UserGameCommand command) {}
+
+    private void leaveGame(Session session, String username, UserGameCommand command) {}
+
+    private void resign(Session session, String username, UserGameCommand command) {}
 }
