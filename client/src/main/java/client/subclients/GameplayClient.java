@@ -2,14 +2,14 @@ package client.subclients;
 
 import chess.ChessGame;
 import client.GameBoardDisplay;
-import facade.ServerFacade;
+import client.websocket.WebSocketFacade;
 
 public class GameplayClient {
 
-    private final ServerFacade server;
+    private final WebSocketFacade server;
     private final GameBoardDisplay display;
 
-    public GameplayClient(ServerFacade server) {
+    public GameplayClient(WebSocketFacade server) {
         this.server = server;
         display = new GameBoardDisplay();
     }
@@ -46,13 +46,7 @@ public class GameplayClient {
         return "Highlight function";
     }
 
-    public void gameboard(String[] params, ChessGame game) {
-        if (params.length < 2) {
-            display.showBoard(game, null);
-        } else if (params[1].equals("white")) {
-            display.showBoard(game, ChessGame.TeamColor.WHITE);
-        } else if (params[1].equals("black")) {
-            display.showBoard(game, ChessGame.TeamColor.BLACK);
-        }
+    public void gameboard(ChessGame.TeamColor color, ChessGame game) {
+        display.showBoard(game, color);
     }
 }

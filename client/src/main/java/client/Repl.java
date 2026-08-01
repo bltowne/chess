@@ -5,29 +5,34 @@ import client.subclients.GameplayClient;
 import client.subclients.LoggedInClient;
 import client.subclients.LoggedOutClient;
 import client.websocket.NotificationHandler;
+import client.websocket.WebSocketFacade;
 import exception.ResponseException;
 import facade.ServerFacade;
 import model.*;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Repl implements NotificationHandler {
 
+    private final WebSocketFacade ws;
     private final LoggedOutClient loggedOut;
     private final LoggedInClient loggedIn;
     private final GameplayClient gameplay;
     private String isLoggedIn;
     private ChessGame isGameplay;
+    private ChessGame.TeamColor color;
 
     public Repl(String serverUrl) throws ResponseException {
         ServerFacade server = new ServerFacade(serverUrl);
+        ws = new WebSocketFacade(serverUrl, this);
         isLoggedIn = null;
         isGameplay = null;
         loggedOut = new LoggedOutClient(server);
         loggedIn = new LoggedInClient(server);
-        gameplay = new GameplayClient(server);
+        gameplay = new GameplayClient(ws);
+        color = null;
     }
 
     public void run() {
@@ -50,7 +55,21 @@ public class Repl implements NotificationHandler {
     }
 
     public void notify(ServerMessage notification) {
-//        System.out.println(notification.message());
+        switch (notification.getServerMessageType()) {
+            case LOAD_GAME -> {
+                LoadGameMessage message = (LoadGameMessage) notification;
+                ChessGame game = message.getGame();
+                gameplay.gameboard(color, game);
+            }
+            case ERROR -> {
+                ErrorMessage message = (ErrorMessage) notification;
+                System.out.println(message.getErrorMessage());
+            }
+            case NOTIFICATION -> {
+                NotificationMessage message = (NotificationMessage) notification;
+                System.out.println(message.getMessage());
+            }
+        }
         printPrompt();
     }
 
@@ -111,13 +130,13 @@ public class Repl implements NotificationHandler {
                 ChessGame game = loggedIn.join(params, isLoggedIn);
                 System.out.println("Successfully joined game");
                 isGameplay = game;
-                gameplay.gameboard(params, game);
+                gameplay.gameboard(getColor(params[1]), game);
                 return "";
             }
             case "observe" -> {
                 ChessGame game = loggedIn.observe(params);
                 System.out.println("Successfully observing game");
-                gameplay.gameboard(params, game);
+                gameplay.gameboard(null, game);
                 return "";
             }
             default -> {
@@ -140,7 +159,14 @@ public class Repl implements NotificationHandler {
                 return gameplay.move(params);
             }
             case "resign" -> {
-                return gameplay.resign();
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Are you sure you want to resign? [yes|no]");
+                String line = scanner.nextLine();
+                if (line.equals("yes")) {
+                    return gameplay.resign();
+                } else {
+                    return "";
+                }
             }
             case "highlight" -> {
                 return gameplay.highlight(params);
@@ -163,5 +189,14 @@ public class Repl implements NotificationHandler {
         } else {
             return "[LOGGED_OUT]";
         }
+    }
+
+    private ChessGame.TeamColor getColor(String param) {
+        if (param.equals("white")) {
+            color = ChessGame.TeamColor.WHITE;
+        } else if (param.equals("black")) {
+            color = ChessGame.TeamColor.BLACK;
+        }
+        return color;
     }
 }
