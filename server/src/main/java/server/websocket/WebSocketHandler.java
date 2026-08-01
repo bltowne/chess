@@ -25,7 +25,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             gameID = command.getGameID();
-            String username = getUsername(command.getAuthString());
+            String username = "";
+//            String username = getUsername(command.getAuthString());
             saveSession(gameID, session);
 
             switch (command.getCommandType()) {
@@ -44,7 +45,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    private String getUsername(String authToken) {}
+    private String getUsername(String authToken) {
+        return "";
+    }
 
     private void saveSession(int gameID, Session session) {}
 
