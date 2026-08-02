@@ -3,9 +3,11 @@ package client.websocket;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import jakarta.websocket.*;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import java.net.URI;
+
+import static websocket.messages.ServerMessage.ServerMessageType.ERROR;
 
 public class WebSocketFacade extends Endpoint {
 
@@ -24,8 +26,12 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    notificationHandler.notify(notification);
+                    try {
+                        ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+                        notificationHandler.notify(notification);
+                    } catch (Exception ex) {
+                        notificationHandler.notify(new ErrorMessage(ERROR, ex.getMessage()));
+                    }
                 }
             });
         } catch (Exception ex) {
@@ -35,4 +41,14 @@ public class WebSocketFacade extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {}
+
+    public void connect() {
+
+    }
+
+    public void makeMove() {}
+
+    public void resign() {}
+
+    public void leave() {}
 }
