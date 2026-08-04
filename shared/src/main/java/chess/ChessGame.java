@@ -15,11 +15,13 @@ public class ChessGame {
     ChessBoard board;
     ChessBoard prevBoard;
     TeamColor color;
+    boolean active;
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
         color = TeamColor.WHITE;
+        active = true;
     }
 
     /**
@@ -58,6 +60,12 @@ public class ChessGame {
     @Override
     public int hashCode() {
         return Objects.hash(board, prevBoard, color);
+    }
+
+    public boolean getActive() {return active;}
+
+    public void endGame() {
+        active = false;
     }
 
     private ChessBoard copyBoard(ChessBoard board) {
