@@ -73,7 +73,7 @@ public class LoggedInClient {
         return i + dash + game.gameName() + dash + whitePlayer + dash + blackPlayer + "\n";
     }
 
-    public ChessGame join(String[] params, String authToken) throws ResponseException {
+    public GameData join(String[] params, String authToken) throws ResponseException {
         if (params.length >= 2) {
             int externalGameID = getExternalGameID(params);
             ChessGame.TeamColor color;
@@ -87,7 +87,7 @@ public class LoggedInClient {
             if (externalGameID <= games.size() && externalGameID > 0) {
                 JoinRequest request = new JoinRequest(color, games.get(externalGameID - 1).gameID());
                 server.join(request, authToken);
-                return games.get(externalGameID - 1).game();
+                return games.get(externalGameID - 1);
             }
             throw new ResponseException(ResponseException.Code.ClientError, "Error: provided game ID doesn't exist");
         }
@@ -104,11 +104,11 @@ public class LoggedInClient {
         return externalGameID;
     }
 
-    public ChessGame observe(String[] params) throws ResponseException {
+    public GameData observe(String[] params) throws ResponseException {
         if (params.length >= 1) {
             int externalGameID = getExternalGameID(params);
             if (externalGameID <= games.size() && externalGameID > 0) {
-                return games.get(externalGameID - 1).game();
+                return games.get(externalGameID - 1);
             }
             throw new ResponseException(ResponseException.Code.ClientError, "Error: provided game ID doesn't exist");
         }

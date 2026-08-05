@@ -21,7 +21,7 @@ public class Repl implements NotificationHandler {
     private final LoggedInClient loggedIn;
     private final GameplayClient gameplay;
     private String isLoggedIn;
-    private ChessGame isGameplay;
+    private Integer isGameplay;
     private ChessGame.TeamColor color;
 
     public Repl(String serverUrl) throws ResponseException {
@@ -59,7 +59,8 @@ public class Repl implements NotificationHandler {
             case LOAD_GAME -> {
                 LoadGameMessage message = (LoadGameMessage) notification;
                 ChessGame game = message.getGame();
-                gameplay.gameboard(color, game);
+                gameplay.saveGame(game, color);
+                gameplay.gameboard();
             }
             case ERROR -> {
                 ErrorMessage message = (ErrorMessage) notification;
@@ -127,16 +128,18 @@ public class Repl implements NotificationHandler {
                 return loggedIn.list(isLoggedIn);
             }
             case "join" -> {
-                ChessGame game = loggedIn.join(params, isLoggedIn);
+                GameData game = loggedIn.join(params, isLoggedIn);
                 System.out.println("Successfully joined game");
-                isGameplay = game;
-                gameplay.gameboard(getColor(params[1]), game);
+                setColor(params[1]);
+                isGameplay = game.gameID();
+                ws.connect(isLoggedIn, isGameplay);
                 return "";
             }
             case "observe" -> {
-                ChessGame game = loggedIn.observe(params);
+                GameData game = loggedIn.observe(params);
                 System.out.println("Successfully observing game");
-                gameplay.gameboard(null, game);
+                isGameplay = game.gameID();
+                ws.connect(isLoggedIn, isGameplay);
                 return "";
             }
             default -> {
@@ -151,19 +154,19 @@ public class Repl implements NotificationHandler {
                 return gameplay.redraw();
             }
             case "leave" -> {
-                String response = gameplay.leave();
+                String response = gameplay.leave(isLoggedIn, isGameplay);
                 isGameplay = null;
                 return response;
             }
             case "move" -> {
-                return gameplay.move(params);
+                return gameplay.move(isLoggedIn, isGameplay, params);
             }
             case "resign" -> {
                 Scanner scanner = new Scanner(System.in);
                 System.out.println("Are you sure you want to resign? [yes|no]");
                 String line = scanner.nextLine();
                 if (line.equals("yes")) {
-                    return gameplay.resign();
+                    return gameplay.resign(isLoggedIn, isGameplay);
                 } else {
                     return "";
                 }
@@ -191,12 +194,11 @@ public class Repl implements NotificationHandler {
         }
     }
 
-    private ChessGame.TeamColor getColor(String param) {
+    private void setColor(String param) {
         if (param.equals("white")) {
             color = ChessGame.TeamColor.WHITE;
         } else if (param.equals("black")) {
             color = ChessGame.TeamColor.BLACK;
         }
-        return color;
     }
 }
