@@ -83,6 +83,16 @@ public class MySqlGameDAO implements GameDAO {
         var statement = "UPDATE games SET game=? WHERE gameID=?";
         executeUpdateGame(statement, parsedGame, gameID);
     }
+    
+    public void leaveGame(int gameID, ChessGame.TeamColor color) throws ResponseException {
+        String statement = "";
+        if (color.equals(ChessGame.TeamColor.WHITE)) {
+            statement = "UPDATE games SET whiteUsername=? WHERE gameID=?";
+        } else if (color.equals(ChessGame.TeamColor.BLACK)) {
+            statement = "UPDATE games SET blackUsername=? WHERE gameID=?";
+        }
+        executeUpdateGame(statement, null, gameID);
+    }
 
     private GameData readGame(ResultSet rs) throws SQLException {
         return new GameData(rs.getInt("gameID"),

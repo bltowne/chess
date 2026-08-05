@@ -174,6 +174,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void leaveGame(Session session, String username, UserGameCommand command) throws IOException {
         connections.remove(command.getGameID(), session);
+        ChessGame.TeamColor color = getUserColor(command.getGameID(), username);
+        if (color != null) {
+            gameAccess.leaveGame(command.getGameID(), color);
+        }
         var notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION, String.format("%s has left the game", username));
         connections.broadcast(session, notification, command.getGameID());
@@ -190,9 +194,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private ChessGame.TeamColor getUserColor(int gameID, String username) {
         GameData game = gameAccess.findGame(gameID);
-        if (game != null && game.whiteUsername().equals(username)) {
+        if (game != null && game.whiteUsername() != null && game.whiteUsername().equals(username)) {
             return ChessGame.TeamColor.WHITE;
-        } else if (game != null && game.blackUsername().equals(username)) {
+        } else if (game != null && game.blackUsername() != null && game.blackUsername().equals(username)) {
             return ChessGame.TeamColor.BLACK;
         } else {
             return null;

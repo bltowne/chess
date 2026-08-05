@@ -20,4 +20,6 @@ public interface GameDAO {
     void deleteAllGames() throws ResponseException;
 
     void updateGame(int gameID, ChessGame game) throws ResponseException;
+
+    void leaveGame(int gameID, ChessGame.TeamColor color) throws ResponseException;
 }

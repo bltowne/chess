@@ -45,6 +45,8 @@ public class MemoryGameDAO implements GameDAO {
 
     public void updateGame(int gameID, ChessGame game) {}
 
+    public void leaveGame(int gameID, ChessGame.TeamColor color) {}
+
     private int generateGameID() {
         Random random = new Random();
         int gameID = random.nextInt(9999);
