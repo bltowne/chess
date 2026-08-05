@@ -33,6 +33,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             gameID = command.getGameID();
             String username = getUsername(command.getAuthToken(), session);
+            if (username == null) {
+                return;
+            }
             saveSession(gameID, session, username);
 
             switch (command.getCommandType()) {
@@ -62,7 +65,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (Exception ex) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: unauthorized");
             session.getRemote().sendString(notification.toString());
-            return "";
+            return null;
         }
     }
 
@@ -72,10 +75,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(Session session, String username, UserGameCommand command) throws IOException {
-        GameData game;
-        try {
-            game = gameAccess.findGame(command.getGameID());
-        } catch (Exception ex) {
+        GameData game = gameAccess.findGame(command.getGameID());
+        if (game == null) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: invalid game ID");
             session.getRemote().sendString(notification.toString());
             return;
