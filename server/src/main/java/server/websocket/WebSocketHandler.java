@@ -104,8 +104,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             return;
         }
 
+        boolean madeMove = false;
+        boolean inCheck = false;
+        boolean inCheckmate = false;
+        boolean inStalemate = false;
+        String mate = "";
+        String check = "";
+
         try {
             game.makeMove(command.getMove());
+            madeMove = true;
         } catch (InvalidMoveException ex) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: invalid move");
             session.getRemote().sendString(notification.toString());
@@ -113,53 +121,54 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-            var notification = new NotificationMessage(
-                    ServerMessage.ServerMessageType.NOTIFICATION, "Checkmate for team white. Black wins!"
-            );
-            connections.broadcast(null, notification, command.getGameID());
-            game.endGame();
-            return;
+            inCheckmate = true;
+            mate = "Checkmate for team white. Black wins!";
         } else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
-            var notification = new NotificationMessage(
-                    ServerMessage.ServerMessageType.NOTIFICATION, "Checkmate for team black. White wins!"
-            );
-            connections.broadcast(null, notification, command.getGameID());
-            game.endGame();
-            return;
+            inCheckmate = true;
+            mate = "Checkmate for team black. White wins!";
         }
 
         if (game.isInStalemate(ChessGame.TeamColor.WHITE)) {
-            var notification = new NotificationMessage(
-                    ServerMessage.ServerMessageType.NOTIFICATION, "Stalemate for team white. Black wins!"
-            );
-            connections.broadcast(null, notification, command.getGameID());
-            game.endGame();
-            return;
+            inStalemate = true;
+            mate = "Stalemate for team white. Black wins!";
         } else if (game.isInStalemate(ChessGame.TeamColor.BLACK)) {
-            var notification = new NotificationMessage(
-                    ServerMessage.ServerMessageType.NOTIFICATION, "Stalemate for team black. White wins!"
-            );
-            connections.broadcast(null, notification, command.getGameID());
-            game.endGame();
-            return;
+            inStalemate = true;
+            mate = "Stalemate for team black. White wins!";
         }
 
         if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
-            var notification = new NotificationMessage(
-                    ServerMessage.ServerMessageType.NOTIFICATION, "White is in check"
-            );
-            connections.broadcast(null, notification, command.getGameID());
+            inCheck = true;
+            check = "White is in check";
         } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
-            var notification = new NotificationMessage(
-                    ServerMessage.ServerMessageType.NOTIFICATION, "Black is in check"
-            );
-            connections.broadcast(null, notification, command.getGameID());
+            inCheck = true;
+            check = "Black is in check";
         }
 
-        if (userColor.equals(ChessGame.TeamColor.WHITE)) {
-            game.setTeamTurn(ChessGame.TeamColor.BLACK);
-        } else if (userColor.equals(ChessGame.TeamColor.BLACK)){
-            game.setTeamTurn(ChessGame.TeamColor.WHITE);
+        if (madeMove) {
+            if (userColor.equals(ChessGame.TeamColor.WHITE)) {
+                game.setTeamTurn(ChessGame.TeamColor.BLACK);
+            } else if (userColor.equals(ChessGame.TeamColor.BLACK)){
+                game.setTeamTurn(ChessGame.TeamColor.WHITE);
+            }
+
+            gameAccess.updateGame(command.getGameID(), game);
+            var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
+            connections.broadcast(null, notification, command.getGameID());
+            var exclusiveNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    String.format("%s moved %s", username, command.getMove().toString()));
+            connections.broadcast(session, exclusiveNotification, command.getGameID());
+        }
+
+        if (inCheckmate || inStalemate) {
+            var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, mate);
+            connections.broadcast(null, notification, command.getGameID());
+            game.endGame();
+            return;
+        }
+
+        if (inCheck) {
+            var checkNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, check);
+            connections.broadcast(null, checkNotification, command.getGameID());
         }
     }
 
@@ -176,7 +185,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         game.endGame();
         var notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION, String.format("%s has resigned. The game is over", username));
-        connections.broadcast(null, notification, command.getGameID());
+        connections.broadcast(session, notification, command.getGameID());
     }
 
     private ChessGame.TeamColor getUserColor(int gameID, String username) {

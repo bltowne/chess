@@ -18,4 +18,6 @@ public interface GameDAO {
     Collection<GameData> listGames() throws ResponseException;
 
     void deleteAllGames() throws ResponseException;
+
+    void updateGame(int gameID, ChessGame game) throws ResponseException;
 }

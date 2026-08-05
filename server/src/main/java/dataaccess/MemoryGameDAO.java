@@ -43,6 +43,8 @@ public class MemoryGameDAO implements GameDAO {
 
     public void deleteAllGames() {games.clear();}
 
+    public void updateGame(int gameID, ChessGame game) {}
+
     private int generateGameID() {
         Random random = new Random();
         int gameID = random.nextInt(9999);

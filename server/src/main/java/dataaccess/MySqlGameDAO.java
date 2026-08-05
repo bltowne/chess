@@ -78,6 +78,12 @@ public class MySqlGameDAO implements GameDAO {
         executeUpdateGame(statement);
     }
 
+    public void updateGame(int gameID, ChessGame game) throws ResponseException {
+        String parsedGame = new Gson().toJson(game);
+        var statement = "UPDATE games SET game=? WHERE gameID=?";
+        executeUpdateGame(statement, parsedGame, gameID);
+    }
+
     private GameData readGame(ResultSet rs) throws SQLException {
         return new GameData(rs.getInt("gameID"),
                             rs.getString("whiteUsername"),

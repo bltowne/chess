@@ -22,11 +22,11 @@ public class ConnectionManager {
         } else {
             users = new ArrayList<>();
         }
-        if (color != null && color.equals(ChessGame.TeamColor.WHITE)) {
+        if (!userInArray(users, session) && color != null && color.equals(ChessGame.TeamColor.WHITE)) {
             users.add(new User(session, User.UserType.WHITE));
-        } else if (color != null && color.equals(ChessGame.TeamColor.BLACK)) {
+        } else if (!userInArray(users, session) && color != null && color.equals(ChessGame.TeamColor.BLACK)) {
             users.add(new User(session, User.UserType.BLACK));
-        } else {
+        } else if (!userInArray(users, session)){
             users.add(new User(session, User.UserType.OBSERVE));
         }
         connections.put(gameID, users);
@@ -55,5 +55,14 @@ public class ConnectionManager {
                 }
             }
         }
+    }
+
+    private boolean userInArray(ArrayList<User> users, Session session) {
+        for (User user : users) {
+            if (user.session().equals(session)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
