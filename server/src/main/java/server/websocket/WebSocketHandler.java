@@ -184,12 +184,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void resign(Session session, String username, UserGameCommand command) throws IOException {
+        User.UserType userType = connections.findUserType(session, command.getGameID());
+        if (userType.equals(User.UserType.OBSERVE)) {
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: observers can't resign");
+            session.getRemote().sendString(notification.toString());
+            return;
+        }
         GameData gameData = gameAccess.findGame(command.getGameID());
         ChessGame game = gameData.game();
+        if (!game.getActive()) {
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: game is over");
+            session.getRemote().sendString(notification.toString());
+            return;
+        }
         game.endGame();
+        gameAccess.updateGame(command.getGameID(), game);
         var notification = new NotificationMessage(
                 ServerMessage.ServerMessageType.NOTIFICATION, String.format("%s has resigned. The game is over", username));
-        connections.broadcast(session, notification, command.getGameID());
+        connections.broadcast(null, notification, command.getGameID());
     }
 
     private ChessGame.TeamColor getUserColor(int gameID, String username) {

@@ -57,6 +57,16 @@ public class ConnectionManager {
         }
     }
 
+    public User.UserType findUserType(Session session, int gameID) {
+        ArrayList<User> users = connections.get(gameID);
+        for (User user : users) {
+            if (user.session().equals(session)) {
+                return user.userType();
+            }
+        }
+        return null;
+    }
+
     private boolean userInArray(ArrayList<User> users, Session session) {
         for (User user : users) {
             if (user.session().equals(session)) {
