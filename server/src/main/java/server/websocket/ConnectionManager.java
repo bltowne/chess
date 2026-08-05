@@ -22,9 +22,9 @@ public class ConnectionManager {
         } else {
             users = new ArrayList<>();
         }
-        if (color.equals(ChessGame.TeamColor.WHITE)) {
+        if (color != null && color.equals(ChessGame.TeamColor.WHITE)) {
             users.add(new User(session, User.UserType.WHITE));
-        } else if (color.equals(ChessGame.TeamColor.BLACK)) {
+        } else if (color != null && color.equals(ChessGame.TeamColor.BLACK)) {
             users.add(new User(session, User.UserType.BLACK));
         } else {
             users.add(new User(session, User.UserType.OBSERVE));

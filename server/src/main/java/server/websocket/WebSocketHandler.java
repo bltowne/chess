@@ -180,9 +180,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private ChessGame.TeamColor getUserColor(int gameID, String username) {
         GameData game = gameAccess.findGame(gameID);
-        if (game.whiteUsername().equals(username)) {
+        if (game != null && game.whiteUsername().equals(username)) {
             return ChessGame.TeamColor.WHITE;
-        } else if (game.blackUsername().equals(username)) {
+        } else if (game != null && game.blackUsername().equals(username)) {
             return ChessGame.TeamColor.BLACK;
         } else {
             return null;
