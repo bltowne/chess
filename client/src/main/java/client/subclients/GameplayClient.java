@@ -60,6 +60,9 @@ public class GameplayClient {
         if (params.length >= 1) {
             ChessPosition move = convertToPosition(params[0]);
             Collection<ChessMove> moveOptions = game.validMoves(move);
+            if (moveOptions == null) {
+                throw new ResponseException(ResponseException.Code.ClientError, "Error: please select a square with a piece");
+            }
             Collection<ChessPosition> highlights = new ArrayList<>();
             for (ChessMove moveOption : moveOptions) {
                 highlights.add(moveOption.getEndPosition());
@@ -106,9 +109,7 @@ public class GameplayClient {
                 throw new ResponseException(ResponseException.Code.ClientError, "Error: please input correctly formatted position");
             }
         }
-        ChessPosition position = new ChessPosition(row, col);
-        System.out.println(position);
-        return position;
+        return new ChessPosition(row, col);
     }
 
     private ChessMove convertToMove(String input) {
@@ -116,8 +117,6 @@ public class GameplayClient {
         char two = input.toCharArray()[1];
         char three = input.toCharArray()[2];
         char four = input.toCharArray()[3];
-        ChessMove move = new ChessMove(convertToPosition(String.format("%c%c", one, two)), convertToPosition(String.format("%c%c", three, four)), null);
-        System.out.println(move);
-        return move;
+        return new ChessMove(convertToPosition(String.format("%c%c", one, two)), convertToPosition(String.format("%c%c", three, four)), null);
     }
 }
