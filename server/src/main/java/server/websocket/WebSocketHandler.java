@@ -84,7 +84,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game.game());
         session.getRemote().sendString(notification.toString());
         var notificationToAll = new NotificationMessage(
-                ServerMessage.ServerMessageType.NOTIFICATION, String.format("%s has joined the game", username));
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                String.format("%s has joined the game as %s", username, getPlayerType(session, command.getGameID())));
         connections.broadcast(session, notificationToAll, command.getGameID());
     }
 
@@ -214,6 +215,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } else {
             return null;
         }
+    }
+
+    private String getPlayerType(Session session, int gameID) {
+        switch (connections.findUserType(session, gameID)) {
+            case WHITE -> {
+                return "white";
+            }
+            case BLACK -> {
+                return "black";
+            }
+            case OBSERVE -> {
+                return "observer";
+            }
+        }
+        return "";
     }
 
     private String getWhiteUsername(int gameID) {

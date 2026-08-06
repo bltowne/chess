@@ -39,13 +39,7 @@ public class GameBoardDisplay {
                 if (piece != null && piece.getRow() == 9 - i && piece.getColumn() == j) {
                     initialPosition = piece;
                 }
-                if (highlights != null) {
-                    for (ChessPosition position : highlights) {
-                        if (position != null && position.getRow() == 9 - i && position.getColumn() == j) {
-                            potentialPositions.add(position);
-                        }
-                    }
-                }
+                potentialPositions = getWhiteHighlights(highlights, i, j, potentialPositions);
             }
             if (i % 2 == 0) {
                 whiteStartRow(pieceRow, out, initialPosition, potentialPositions);
@@ -57,6 +51,17 @@ public class GameBoardDisplay {
             out.print("\n");
         }
         borderRow(letterRow, out);
+    }
+
+    private Collection<ChessPosition> getWhiteHighlights(Collection<ChessPosition> highlights, int i, int j, Collection<ChessPosition> potentialPositions) {
+        if (highlights != null) {
+            for (ChessPosition position : highlights) {
+                if (position != null && position.getRow() == 9 - i && position.getColumn() == j) {
+                    potentialPositions.add(position);
+                }
+            }
+        }
+        return potentialPositions;
     }
 
     private void blackBoard(ChessBoard board, PrintStream out, ChessPosition piece, Collection<ChessPosition> highlights) {
@@ -73,13 +78,7 @@ public class GameBoardDisplay {
                 if (piece != null && piece.getRow() == i && piece.getColumn() == 9 - j) {
                     initialPosition = new ChessPosition(i, j);
                 }
-                if (highlights != null) {
-                    for (ChessPosition position : highlights) {
-                        if (position != null && position.getRow() == i && position.getColumn() == 9 - j) {
-                            potentialPositions.add(new ChessPosition(i, j));
-                        }
-                    }
-                }
+                potentialPositions = getBlackHighlights(highlights, i, j, potentialPositions);
             }
             if (i % 2 == 0) {
                 whiteStartRow(pieceRow, out, initialPosition, potentialPositions);
@@ -91,6 +90,17 @@ public class GameBoardDisplay {
             out.print("\n");
         }
         borderRow(letterRow, out);
+    }
+
+    private Collection<ChessPosition> getBlackHighlights(Collection<ChessPosition> highlights, int i, int j, Collection<ChessPosition> potentialPositions) {
+        if (highlights != null) {
+            for (ChessPosition position : highlights) {
+                if (position != null && position.getRow() == i && position.getColumn() == 9 - j) {
+                    potentialPositions.add(new ChessPosition(i, j));
+                }
+            }
+        }
+        return potentialPositions;
     }
 
     private void borderRow(List<String> row, PrintStream out) {

@@ -31,19 +31,15 @@ public class WebSocketFacade extends Endpoint {
                 public void onMessage(String message) {
                     try {
                         ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                        switch (notification.getServerMessageType()) {
-                            case LOAD_GAME -> {
-                                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-                                notificationHandler.notify(loadGameMessage);
-                            }
-                            case ERROR -> {
-                                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
-                                notificationHandler.notify(errorMessage);
-                            }
-                            case NOTIFICATION -> {
-                                NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
-                                notificationHandler.notify(notificationMessage);
-                            }
+                        if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
+                            LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                            notificationHandler.notify(loadGameMessage);
+                        } else if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)) {
+                            ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+                            notificationHandler.notify(errorMessage);
+                        } else if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)) {
+                            NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
+                            notificationHandler.notify(notificationMessage);
                         }
                     } catch (Exception ex) {
                         notificationHandler.notify(new ErrorMessage(ERROR, ex.getMessage()));
