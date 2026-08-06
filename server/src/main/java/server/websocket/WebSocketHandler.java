@@ -122,26 +122,26 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
             inCheckmate = true;
-            mate = "Checkmate for team white. Black wins!";
+            mate = String.format("Checkmate for %s. %s wins!", getWhiteUsername(command.getGameID()), getBlackUsername(command.getGameID()));
         } else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
             inCheckmate = true;
-            mate = "Checkmate for team black. White wins!";
+            mate = String.format("Checkmate for %s. %s wins!", getBlackUsername(command.getGameID()), getWhiteUsername(command.getGameID()));
         }
 
         if (game.isInStalemate(ChessGame.TeamColor.WHITE)) {
             inStalemate = true;
-            mate = "Stalemate for team white. Black wins!";
+            mate = String.format("Stalemate for %s. %s wins!", getWhiteUsername(command.getGameID()), getBlackUsername(command.getGameID()));
         } else if (game.isInStalemate(ChessGame.TeamColor.BLACK)) {
             inStalemate = true;
-            mate = "Stalemate for team black. White wins!";
+            mate = String.format("Stalemate for %s. %s wins!", getBlackUsername(command.getGameID()), getWhiteUsername(command.getGameID()));
         }
 
         if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
             inCheck = true;
-            check = "White is in check";
+            check = String.format("%s is in check", getWhiteUsername(command.getGameID()));
         } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
             inCheck = true;
-            check = "Black is in check";
+            check = String.format("%s is in check", getBlackUsername(command.getGameID()));
         }
 
         if (madeMove) {
@@ -155,7 +155,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
             connections.broadcast(null, notification, command.getGameID());
             var exclusiveNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                    String.format("%s moved %s", username, command.getMove().toString()));
+                    String.format("%s moved %s to %s", username, convertFromPosition(command.getMove().getStartPosition()),
+                            convertFromPosition(command.getMove().getEndPosition())));
             connections.broadcast(session, exclusiveNotification, command.getGameID());
         }
 
@@ -213,5 +214,55 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } else {
             return null;
         }
+    }
+
+    private String getWhiteUsername(int gameID) {
+        GameData game = gameAccess.findGame(gameID);
+        return game.whiteUsername();
+    }
+
+    private String getBlackUsername (int gameID) {
+        GameData game = gameAccess.findGame(gameID);
+        return game.blackUsername();
+    }
+
+    private String convertFromPosition(ChessPosition position) {
+        String letter = "";
+        String number = "";
+        if (position.getColumn() == 1) {
+            letter = "a";
+        } else if (position.getColumn() == 2) {
+            letter = "b";
+        } else if (position.getColumn() == 3) {
+            letter = "c";
+        } else if (position.getColumn() == 4) {
+            letter = "d";
+        } else if (position.getColumn() == 5) {
+            letter = "e";
+        } else if (position.getColumn() == 6) {
+            letter = "f";
+        } else if (position.getColumn() == 7) {
+            letter = "g";
+        } else if (position.getColumn() == 8) {
+            letter = "h";
+        }
+        if (position.getRow() == 1) {
+            number = "1";
+        } else if (position.getRow() == 2) {
+            number = "2";
+        } else if (position.getRow() == 3) {
+            number = "3";
+        } else if (position.getRow() == 4) {
+            number = "4";
+        } else if (position.getRow() == 5) {
+            number = "5";
+        } else if (position.getRow() == 6) {
+            number = "6";
+        } else if (position.getRow() == 7) {
+            number = "7";
+        } else if (position.getRow() == 8) {
+            number = "8";
+        }
+        return String.format("%s%s", letter, number);
     }
 }

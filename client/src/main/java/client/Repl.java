@@ -74,7 +74,6 @@ public class Repl implements NotificationHandler {
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            ex.printStackTrace();
         }
         printPrompt();
     }
@@ -97,7 +96,6 @@ public class Repl implements NotificationHandler {
                 return evalLoggedOut(cmd, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             return ex.getMessage();
         }
     }

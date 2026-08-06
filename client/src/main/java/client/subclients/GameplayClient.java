@@ -76,9 +76,6 @@ public class GameplayClient {
                 if (!alreadyIncluded) {
                     highlights.add(moveOption.getEndPosition());
                 }
-//                if (moveOption.getPromotionPiece() != null) {
-//                    break;
-//                }
             }
             display.showBoard(game, color, move, highlights);
             return "";
