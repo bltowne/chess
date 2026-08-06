@@ -16,22 +16,21 @@ import java.util.Scanner;
 
 public class Repl implements NotificationHandler {
 
-    private final WebSocketFacade ws;
+    private final String serverUrl;
     private final LoggedOutClient loggedOut;
     private final LoggedInClient loggedIn;
-    private final GameplayClient gameplay;
+    private GameplayClient gameplay;
     private String isLoggedIn;
     private Integer isGameplay;
     private ChessGame.TeamColor color;
 
     public Repl(String serverUrl) throws ResponseException {
         ServerFacade server = new ServerFacade(serverUrl);
-        ws = new WebSocketFacade(serverUrl, this);
+        this.serverUrl = serverUrl;
         isLoggedIn = null;
         isGameplay = null;
         loggedOut = new LoggedOutClient(server);
         loggedIn = new LoggedInClient(server);
-        gameplay = new GameplayClient(ws);
         color = null;
     }
 
@@ -55,6 +54,7 @@ public class Repl implements NotificationHandler {
     }
 
     public void notify(ServerMessage notification) {
+        System.out.println();
         try {
             switch (notification.getServerMessageType()) {
                 case LOAD_GAME -> {
@@ -97,6 +97,7 @@ public class Repl implements NotificationHandler {
                 return evalLoggedOut(cmd, params);
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             return ex.getMessage();
         }
     }
@@ -120,6 +121,7 @@ public class Repl implements NotificationHandler {
     }
 
     private String evalLoggedIn(String cmd, String[] params) {
+        WebSocketFacade ws;
         switch (cmd) {
             case "logout" -> {
                 String result = loggedIn.logout(isLoggedIn);
@@ -137,14 +139,16 @@ public class Repl implements NotificationHandler {
                 System.out.println("Successfully joined game");
                 setColor(params[1]);
                 isGameplay = game.gameID();
-                ws.connect(isLoggedIn, isGameplay);
+                ws = new WebSocketFacade(serverUrl, this);
+                gameplay = new GameplayClient(ws, isLoggedIn, isGameplay);
                 return "";
             }
             case "observe" -> {
                 GameData game = loggedIn.observe(params);
                 System.out.println("Successfully observing game");
                 isGameplay = game.gameID();
-                ws.connect(isLoggedIn, isGameplay);
+                ws = new WebSocketFacade(serverUrl, this);
+                gameplay = new GameplayClient(ws, isLoggedIn, isGameplay);
                 return "";
             }
             default -> {

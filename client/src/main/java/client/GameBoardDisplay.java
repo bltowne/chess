@@ -35,13 +35,13 @@ public class GameBoardDisplay {
             ChessPosition initialPosition = null;
             Collection<ChessPosition> potentialPositions = new ArrayList<>();
             for (int j = 1; j <= 8; j++) {
-                pieceRow.add(board.getPiece(new ChessPosition(i, j)));
-                if (piece != null && piece.getRow() == i && piece.getColumn() == j) {
+                pieceRow.add(board.getPiece(new ChessPosition(9 - i, j)));
+                if (piece != null && piece.getRow() == 9 - i && piece.getColumn() == j) {
                     initialPosition = piece;
                 }
                 if (highlights != null) {
                     for (ChessPosition position : highlights) {
-                        if (position != null && position.getRow() == i && position.getColumn() == j) {
+                        if (position != null && position.getRow() == 9 - i && position.getColumn() == j) {
                             potentialPositions.add(position);
                         }
                     }
@@ -69,14 +69,14 @@ public class GameBoardDisplay {
             ChessPosition initialPosition = null;
             Collection<ChessPosition> potentialPositions = new ArrayList<>();
             for (int j = 1; j <= 8; j++) {
-                pieceRow.add(board.getPiece(new ChessPosition(9 - i, 9 - j)));
-                if (piece != null && piece.getRow() == 9 - i && piece.getColumn() == 9 - j) {
+                pieceRow.add(board.getPiece(new ChessPosition(i, 9 - j)));
+                if (piece != null && piece.getRow() == i && piece.getColumn() == 9 - j) {
                     initialPosition = piece;
                 }
                 if (highlights != null) {
                     for (ChessPosition position : highlights) {
-                        if (position != null && position.getRow() == 9 - i && position.getColumn() == 9 - j) {
-                            potentialPositions.add(new ChessPosition(9 - i, 9 - j));
+                        if (position != null && position.getRow() == i && position.getColumn() == 9 - j) {
+                            potentialPositions.add(new ChessPosition(i, 9 - j));
                         }
                     }
                 }
@@ -202,9 +202,9 @@ public class GameBoardDisplay {
 
     private void setTeamColor(PrintStream out, ChessPiece piece) {
         if (piece != null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            out.print(SET_TEXT_COLOR_BLACK);
-        } else if (piece != null && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             out.print(SET_TEXT_COLOR_RED);
+        } else if (piece != null && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            out.print(SET_TEXT_COLOR_BLACK);
         }
     }
 }
