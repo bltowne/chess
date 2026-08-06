@@ -7,6 +7,7 @@ import exception.ResponseException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Scanner;
 
 public class GameplayClient {
 
@@ -65,7 +66,10 @@ public class GameplayClient {
             }
             Collection<ChessPosition> highlights = new ArrayList<>();
             for (ChessMove moveOption : moveOptions) {
-                highlights.add(moveOption.getEndPosition());
+                System.out.println(moveOption);
+                if (moveOption.getPromotionPiece() == null) {
+                    highlights.add(moveOption.getEndPosition());
+                }
             }
             display.showBoard(game, color, move, highlights);
             return "";
@@ -115,8 +119,34 @@ public class GameplayClient {
     private ChessMove convertToMove(String input) {
         char one = input.toCharArray()[0];
         char two = input.toCharArray()[1];
+        ChessPosition startPosition = convertToPosition(String.format("%c%c", one, two));
         char three = input.toCharArray()[2];
         char four = input.toCharArray()[3];
-        return new ChessMove(convertToPosition(String.format("%c%c", one, two)), convertToPosition(String.format("%c%c", three, four)), null);
+        ChessPosition endPosition = convertToPosition(String.format("%c%c", three, four));
+        ChessPiece.PieceType promotion = checkForPromotion(startPosition);
+        return new ChessMove(startPosition, endPosition, promotion);
+    }
+
+    private ChessPiece.PieceType checkForPromotion(ChessPosition position) {
+        ChessBoard board = game.getBoard();
+        ChessPiece piece = board.getPiece(position);
+        if (piece != null && piece.getPieceType().equals(ChessPiece.PieceType.PAWN)) {
+            if ((position.getRow() == 7 && piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) ||
+                    (position.getRow() == 2 && piece.getTeamColor().equals(ChessGame.TeamColor.BLACK))) {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Your pawn can promote! Please enter [queen|bishop|knight|rook]");
+                String line = scanner.nextLine();
+                if (line.equals("queen")) {
+                    return ChessPiece.PieceType.QUEEN;
+                } else if (line.equals("bishop")) {
+                    return ChessPiece.PieceType.BISHOP;
+                } else if (line.equals("knight")) {
+                    return ChessPiece.PieceType.KNIGHT;
+                } else if (line.equals("rook")) {
+                    return ChessPiece.PieceType.ROOK;
+                }
+            }
+        }
+        return null;
     }
 }

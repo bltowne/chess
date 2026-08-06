@@ -71,12 +71,12 @@ public class GameBoardDisplay {
             for (int j = 1; j <= 8; j++) {
                 pieceRow.add(board.getPiece(new ChessPosition(i, 9 - j)));
                 if (piece != null && piece.getRow() == i && piece.getColumn() == 9 - j) {
-                    initialPosition = piece;
+                    initialPosition = new ChessPosition(i, j);
                 }
                 if (highlights != null) {
                     for (ChessPosition position : highlights) {
                         if (position != null && position.getRow() == i && position.getColumn() == 9 - j) {
-                            potentialPositions.add(new ChessPosition(i, 9 - j));
+                            potentialPositions.add(new ChessPosition(i, j));
                         }
                     }
                 }
