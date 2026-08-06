@@ -66,10 +66,19 @@ public class GameplayClient {
             }
             Collection<ChessPosition> highlights = new ArrayList<>();
             for (ChessMove moveOption : moveOptions) {
-                System.out.println(moveOption);
-                if (moveOption.getPromotionPiece() == null) {
+                boolean alreadyIncluded = false;
+                for (ChessPosition position : highlights) {
+                    if (position.equals(moveOption.getEndPosition())) {
+                        alreadyIncluded = true;
+                        break;
+                    }
+                }
+                if (!alreadyIncluded) {
                     highlights.add(moveOption.getEndPosition());
                 }
+//                if (moveOption.getPromotionPiece() != null) {
+//                    break;
+//                }
             }
             display.showBoard(game, color, move, highlights);
             return "";
