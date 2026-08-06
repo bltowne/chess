@@ -53,7 +53,8 @@ public class GameBoardDisplay {
         borderRow(letterRow, out);
     }
 
-    private Collection<ChessPosition> getWhiteHighlights(Collection<ChessPosition> highlights, int i, int j, Collection<ChessPosition> potentialPositions) {
+    private Collection<ChessPosition>
+    getWhiteHighlights(Collection<ChessPosition> highlights, int i, int j, Collection<ChessPosition> potentialPositions) {
         if (highlights != null) {
             for (ChessPosition position : highlights) {
                 if (position != null && position.getRow() == 9 - i && position.getColumn() == j) {
@@ -92,7 +93,8 @@ public class GameBoardDisplay {
         borderRow(letterRow, out);
     }
 
-    private Collection<ChessPosition> getBlackHighlights(Collection<ChessPosition> highlights, int i, int j, Collection<ChessPosition> potentialPositions) {
+    private Collection<ChessPosition>
+    getBlackHighlights(Collection<ChessPosition> highlights, int i, int j, Collection<ChessPosition> potentialPositions) {
         if (highlights != null) {
             for (ChessPosition position : highlights) {
                 if (position != null && position.getRow() == i && position.getColumn() == 9 - j) {
