@@ -104,12 +104,12 @@ public class GameBoardDisplay {
     private void whiteStartRow(List<ChessPiece> row, PrintStream out, ChessPosition initialPosition, Collection<ChessPosition> potentialPositions) {
         for (int i = 0; i < 8; i++) {
             boolean marked = false;
-            if (initialPosition != null && initialPosition.getColumn() == i) {
+            if (initialPosition != null && initialPosition.getColumn() == i + 1) {
                 highlightPieceSquare(out, row.get(i));
                 marked = true;
             }
             for (ChessPosition position : potentialPositions) {
-                if (position != null && position.getColumn() == i) {
+                if (position != null && position.getColumn() == i + 1) {
                     highlightMoveSquare(out, row.get(i));
                     marked = true;
                 }
@@ -125,12 +125,12 @@ public class GameBoardDisplay {
     private void blackStartRow(List<ChessPiece> row, PrintStream out, ChessPosition initialPosition, Collection<ChessPosition> potentialPositions) {
         for (int i = 0; i < 8; i++) {
             boolean marked = false;
-            if (initialPosition != null && initialPosition.getColumn() == i) {
+            if (initialPosition != null && initialPosition.getColumn() == i + 1) {
                 highlightPieceSquare(out, row.get(i));
                 marked = true;
             }
             for (ChessPosition position : potentialPositions) {
-                if (position != null && position.getColumn() == i) {
+                if (position != null && position.getColumn() == i + 1) {
                     highlightMoveSquare(out, row.get(i));
                     marked = true;
                 }
