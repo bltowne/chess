@@ -39,9 +39,11 @@ public class GameBoardDisplay {
                 if (piece != null && piece.getRow() == i && piece.getColumn() == j) {
                     initialPosition = piece;
                 }
-                for (ChessPosition position : highlights) {
-                    if (position != null && position.getRow() == i && position.getColumn() == j) {
-                        potentialPositions.add(position);
+                if (highlights != null) {
+                    for (ChessPosition position : highlights) {
+                        if (position != null && position.getRow() == i && position.getColumn() == j) {
+                            potentialPositions.add(position);
+                        }
                     }
                 }
             }
@@ -71,9 +73,11 @@ public class GameBoardDisplay {
                 if (piece != null && piece.getRow() == 9 - i && piece.getColumn() == 9 - j) {
                     initialPosition = piece;
                 }
-                for (ChessPosition position : highlights) {
-                    if (position != null && position.getRow() == 9 - i && position.getColumn() == 9 - j) {
-                        potentialPositions.add(new ChessPosition(9 - i, 9 - j));
+                if (highlights != null) {
+                    for (ChessPosition position : highlights) {
+                        if (position != null && position.getRow() == 9 - i && position.getColumn() == 9 - j) {
+                            potentialPositions.add(new ChessPosition(9 - i, 9 - j));
+                        }
                     }
                 }
             }

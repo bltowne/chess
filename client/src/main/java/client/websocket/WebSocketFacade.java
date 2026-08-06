@@ -10,7 +10,7 @@ import websocket.messages.*;
 import java.io.IOException;
 import java.net.URI;
 
-import static websocket.messages.ServerMessage.ServerMessageType.ERROR;
+import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class WebSocketFacade extends Endpoint {
 
@@ -31,7 +31,20 @@ public class WebSocketFacade extends Endpoint {
                 public void onMessage(String message) {
                     try {
                         ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                        notificationHandler.notify(notification);
+                        switch (notification.getServerMessageType()) {
+                            case LOAD_GAME -> {
+                                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                                notificationHandler.notify(loadGameMessage);
+                            }
+                            case ERROR -> {
+                                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+                                notificationHandler.notify(errorMessage);
+                            }
+                            case NOTIFICATION -> {
+                                NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
+                                notificationHandler.notify(notificationMessage);
+                            }
+                        }
                     } catch (Exception ex) {
                         notificationHandler.notify(new ErrorMessage(ERROR, ex.getMessage()));
                     }
